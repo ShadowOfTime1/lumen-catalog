@@ -110,17 +110,19 @@ const GATEWAYS=['https://dweb.link/ipfs/','https://ipfs.io/ipfs/','https://cloud
 const REG=JSON.parse(document.getElementById('registry').textContent).catalogs||[];
 const $=id=>document.getElementById(id);
 const fmt=b=>{b=+b||0;return b<1024?b+' B':b<1048576?(b/1024).toFixed(0)+' KB':b<1073741824?(b/1048576).toFixed(1)+' MB':(b/1073741824).toFixed(2)+' GB'};
-const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cat={};          // cid -> catalog json (loaded)
 const sel=new Map();   // fileCid -> {name,size}
 let open=null;         // currently open catalog cid, or null
 
 async function fetchCID(cid){
-  try{const r=await fetch('ipfs://'+cid);if(r.ok)return await r.json();}catch{}
-  for(const g of GATEWAYS){try{const r=await fetch(g+cid,{signal:AbortSignal.timeout(12000)});if(r.ok)return await r.json();}catch{}}
+  const c=encodeURIComponent(cid);
+  try{const r=await fetch('ipfs://'+c);if(r.ok)return await r.json();}catch{}
+  for(const g of GATEWAYS){try{const r=await fetch(g+c,{signal:AbortSignal.timeout(12000)});if(r.ok)return await r.json();}catch{}}
   throw new Error('unavailable');
 }
-const dlUrl=(cid,name)=>GATEWAYS[0]+cid+'?filename='+encodeURIComponent(name)+'&download=true';
+const dlUrl=(cid,name)=>GATEWAYS[0]+encodeURIComponent(cid)+'?filename='+encodeURIComponent(name)+'&download=true';
+const validCatalog=k=>k&&Array.isArray(k.items);
 
 function setStat(){
   const up=REG.filter(c=>c.up).length, files=REG.filter(c=>cat[c.cid]).reduce((s,c)=>s+cat[c.cid].items.length,0);
@@ -130,7 +132,7 @@ function setStat(){
 async function preload(){
   await Promise.all(REG.map(async c=>{
     if(cat[c.cid]){c.up=true;return;}
-    try{ cat[c.cid]=await fetchCID(c.cid); c.up=true; }catch{ c.up=false; }
+    try{ const k=await fetchCID(c.cid); if(!validCatalog(k))throw 0; cat[c.cid]=k; c.up=true; }catch{ c.up=false; }
   }));
   setStat(); render();
 }
@@ -139,8 +141,13 @@ async function preload(){
 const LS='lumen_index_custom';
 function saveCustom(){ try{ localStorage.setItem(LS, JSON.stringify(REG.filter(c=>c.custom).map(({cid,name,count,size,tags})=>({cid,name,count,size,tags})))); }catch{} }
 function loadCustom(){ try{ (JSON.parse(localStorage.getItem(LS))||[]).forEach(c=>{ if(!REG.find(x=>x.cid===c.cid)) REG.push({...c,custom:true}); }); }catch{} }
+function parseCid(raw){
+  let s=(raw||'').trim();
+  const ix=s.lastIndexOf('/ipfs/'); if(ix>=0)s=s.slice(ix+6);   // accept gateway URLs
+  return s.replace(/^ipfs:\/\//,'').replace(/[/?#].*$/,'').trim(); // strip scheme + trailing path
+}
 async function addByCid(raw){
-  const cid=(raw||'').trim().replace(/^ipfs:\/\//,'').replace(/\/.*$/,'');
+  const cid=parseCid(raw);
   if(!cid) return;
   if(REG.find(c=>c.cid===cid)){ $('addin').value=''; openCat(cid); return; }
   const btn=$('addbtn'); btn.textContent='…'; btn.disabled=true;
@@ -161,16 +168,16 @@ const matchF=(f,q)=>((f.title||f.name)+' '+(f.description||'')+' '+(f.tags||[]).
 const matchC=(c,q)=>(c.name+' '+(c.tags||[]).join(' ')).toLowerCase().includes(q);
 
 function fileRow(f,withCat){
-  const on=sel.has(f.cid);
-  return `<div class="prow${on?' sel':''}" data-cid="${f.cid}" data-name="${esc(f.name)}" data-size="${f.size}">
+  const on=sel.has(f.cid), cid=esc(f.cid);
+  return `<div class="prow${on?' sel':''}" data-cid="${cid}" data-name="${esc(f.name)}" data-size="${esc(f.size)}">
     <input type="checkbox" class="ck"${on?' checked':''}>
     <div><div class="t">${esc(f.title||f.name)}</div>
       <div class="d">${withCat&&f._cat?`<span class="badge">${esc(f._cat)}</span>`:''}${esc(f.description||'')}</div>
-      <div class="cid">${f.cid}</div></div>
+      <div class="cid" title="${cid}">${cid}</div></div>
     <div class="act"><span class="sz">${fmt(f.size)}</span>
-      <button class="btn ghost copy" data-cid="${f.cid}" title="Copy CID">⧉</button>
-      <a class="btn" href="ipfs://${f.cid}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
-      <a class="btn dl" href="${dlUrl(f.cid,f.name)}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
+      <button class="btn ghost copy" data-cid="${cid}" title="Copy CID">⧉</button>
+      <a class="btn" href="ipfs://${encodeURIComponent(f.cid)}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
+      <a class="btn dl" href="${esc(dlUrl(f.cid,f.name))}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
 }
 function catCard(c){
   return `<div class="cat" data-cid="${c.cid}"><span class="dotav${c.up?' up':''}" title="${c.up?'online':'checking…'}"></span>
@@ -191,6 +198,12 @@ function render(){
     html+=`<h2>Files (${fs.length})</h2>`;
     html+= fs.length?`<div class="panel">${fs.map(f=>fileRow(f,true)).join('')}</div>`:`<div class="empty">Nothing matches “${esc(q)}”.</div>`;
     v.innerHTML=html; return;
+  }
+  if(open&&!cat[open]){ // opened but not reachable
+    const c=REG.find(x=>x.cid===open)||{};
+    v.innerHTML=`<h2><span class="back" id="back">← All catalogs</span></h2>
+      <div class="panel"><div class="empty">${esc(c.name||'Catalog')} isn't reachable right now — no one is hosting it. Try again shortly.</div></div>`;
+    return;
   }
   if(open&&cat[open]){ // catalog detail
     const c=REG.find(x=>x.cid===open), k=cat[open];
@@ -215,13 +228,13 @@ function refreshSelbar(){
   $('selsz').textContent=sel.size?('· '+fmt(s)):'';
   $('selbar').classList.toggle('on',sel.size>0);
   document.querySelectorAll('.prow').forEach(r=>{const on=sel.has(r.dataset.cid);r.classList.toggle('sel',on);const ck=r.querySelector('.ck');if(ck)ck.checked=on;});
-  const ckall=$('ckall'); if(ckall&&open&&cat[open])ckall.checked=cat[open].items.every(f=>sel.has(f.cid));
+  const ckall=$('ckall'); if(ckall&&open&&cat[open])ckall.checked=cat[open].items.length>0&&cat[open].items.every(f=>sel.has(f.cid));
 }
 function toggle(cid,name,size,on){ if(on)sel.set(cid,{name,size}); else sel.delete(cid); }
 
 $('view').addEventListener('click',async e=>{
   const rm=e.target.closest('.rmcat');
-  if(rm){ const i=REG.findIndex(c=>c.cid===rm.dataset.rm); if(i>=0){REG.splice(i,1);delete cat[rm.dataset.rm];saveCustom();setStat();render();} return; }
+  if(rm){ const c=rm.dataset.rm; const i=REG.findIndex(x=>x.cid===c); if(i>=0){REG.splice(i,1);delete cat[c];if(open===c)open=null;saveCustom();setStat();render();refreshSelbar();} return; }
   const card=e.target.closest('.cat');
   if(card){ openCat(card.dataset.cid); return; }
   if(e.target.id==='back'){ open=null; render(); refreshSelbar(); return; }
@@ -232,7 +245,7 @@ $('view').addEventListener('click',async e=>{
   if(e.target.id==='dall'){ bulk(cat[open].items); return; }
 });
 $('search').addEventListener('input',()=>{render();refreshSelbar();});
-function bulk(items){ items.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href='ipfs://'+f.cid;a.download=f.name;document.body.appendChild(a);a.click();a.remove();},i*300)); }
+function bulk(items){ items.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=dlUrl(f.cid,f.name);a.rel='noopener';document.body.appendChild(a);a.click();a.remove();},i*300)); }
 $('seldl').addEventListener('click',()=>{const items=[...sel].map(([cid,v])=>({cid,name:v.name}));bulk(items);});
 $('selclear').addEventListener('click',()=>{sel.clear();refreshSelbar();});
 $('selcopy').addEventListener('click',async e=>{try{await navigator.clipboard.writeText([...sel.keys()].join('\n'));e.target.textContent='✓ Copied';setTimeout(()=>e.target.textContent='⧉ Copy CIDs',1100);}catch{}});

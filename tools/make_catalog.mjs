@@ -1,7 +1,7 @@
 // Build a Lumen catalog JSON from a folder: real IPFS CIDs + metadata, pinned to your node.
 // Usage: node make_catalog.mjs <folder> <catalog name> [meta.json]
 // Uses the `ipfs` CLI on your PATH (honours IPFS_PATH). Override the binary with IPFS_BIN.
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
@@ -9,7 +9,8 @@ const [folder, name, metaFile] = process.argv.slice(2);
 if (!folder || !name) { console.error('usage: make_catalog.mjs <folder> <name> [meta.json]'); process.exit(1); }
 
 const IPFS = process.env.IPFS_BIN || 'ipfs';
-const ipfs = (args) => execSync(`${IPFS} ${args}`, { encoding: 'utf8' }).trim();
+// pass args as an array (no shell) so filenames with quotes/$/backticks can't inject commands
+const ipfs = (args) => execFileSync(IPFS, args, { encoding: 'utf8', maxBuffer: 1e8 }).trim();
 
 const TYPES = { '.epub': 'application/epub+zip', '.pdf': 'application/pdf', '.txt': 'text/plain',
   '.mp3': 'audio/mpeg', '.flac': 'audio/flac', '.zip': 'application/zip', '.json': 'application/json',
@@ -22,7 +23,7 @@ const items = [];
 for (const file of fs.readdirSync(folder).sort()) {
   const full = path.join(folder, file);
   if (!fs.statSync(full).isFile()) continue;
-  const cid = ipfs(`add -Q "${full}"`);            // pins + returns CID
+  const cid = ipfs(['add', '-Q', full]);           // pins + returns CID
   const m = meta[file] || {};
   items.push({
     cid,
@@ -48,7 +49,7 @@ const catalog = {
 
 const out = path.join(folder, '..', name.replace(/[^\w.-]+/g, '_') + '.lumencatalog.json');
 fs.writeFileSync(out, JSON.stringify(catalog, null, 2));
-const catCid = ipfs(`add -Q "${out}"`);
+const catCid = ipfs(['add', '-Q', out]);
 console.log(`\ncatalog: ${name} — ${items.length} files, ${(catalog.total_size / 1048576).toFixed(1)} MB`);
 console.log(`json: ${out}`);
 console.log(`CID: ${catCid}`);

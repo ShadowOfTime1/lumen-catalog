@@ -123,8 +123,9 @@ let items=[]; // {cid,name,path,size,type, ...metadata by column key}
 const RESERVED=['cid','name','path','size','type'];
 let cols=[{key:'title',label:'Title',type:'text'},{key:'description',label:'Description',type:'text'},{key:'tags',label:'Tags',type:'tags'}];
 const fmtSize=b=>{b=+b;return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':b<1073741824?(b/1048576).toFixed(1)+' MB':(b/1073741824).toFixed(2)+' GB'};
-const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const cellVal=(i,c)=>c.type==='tags'?(i[c.key]||[]).join(', '):(i[c.key]||'');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const asArray=v=>Array.isArray(v)?v:(v==null||v===''?[]:[String(v)]);
+const cellVal=(i,c)=>c.type==='tags'?asArray(i[c.key]).join(', '):(i[c.key]==null?'':String(i[c.key]));
 
 function totalSize(){return items.reduce((s,i)=>s+ (+i.size||0),0)}
 function renderHead(){
@@ -138,13 +139,13 @@ function render(){
   const rows=items.filter(i=>!q||[i.name,i.path,...cols.map(c=>cellVal(i,c))].join(' ').toLowerCase().includes(q));
   $('cnt').textContent=items.length; $('tot').textContent=fmtSize(totalSize());
   if(!items.length){$('rows').innerHTML=`<tr><td colspan="${span}" class="empty">No files yet — choose a folder to start building your catalog.</td></tr>`;return;}
-  $('rows').innerHTML=rows.map(i=>{const idx=items.indexOf(i);return `<tr data-i="${idx}">
-    <td><span class="cid" title="${i.cid}">${i.cid.slice(0,10)}…${i.cid.slice(-6)}</span></td>
+  $('rows').innerHTML=rows.map(i=>{const idx=items.indexOf(i);const cid=esc(i.cid);return `<tr data-i="${idx}">
+    <td><span class="cid" title="${cid}">${esc(String(i.cid).slice(0,10))}…${esc(String(i.cid).slice(-6))}</span></td>
     <td class="fn" title="${esc(i.name)}">${esc(i.name)}</td>
     <td class="pth" title="${esc(i.path)}">${esc(i.path)}</td>
     <td class="sz">${fmtSize(i.size)}</td>
     <td class="sz">${esc(i.type||'—')}</td>
-    ${cols.map(c=>`<td class="ed"><input data-k="${c.key}" data-type="${c.type}"${c.type==='date'?' type="date"':''} value="${esc(cellVal(i,c))}" placeholder="${esc(c.type==='tags'?'tag, tag':c.label.toLowerCase())}"></td>`).join('')}
+    ${cols.map(c=>`<td class="ed"><input data-k="${esc(c.key)}" data-type="${esc(c.type)}"${c.type==='date'?' type="date"':''} value="${esc(cellVal(i,c))}" placeholder="${esc(c.type==='tags'?'tag, tag':String(c.label).toLowerCase())}"></td>`).join('')}
     <td><button class="del" title="remove">✕</button></td></tr>`}).join('');
 }
 $('rows').addEventListener('input',e=>{const tr=e.target.closest('tr');if(!tr)return;const i=items[+tr.dataset.i];const k=e.target.dataset.k;
@@ -203,13 +204,15 @@ $('exp').addEventListener('click',()=>{
 });
 $('imp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;
   try{const c=JSON.parse(await f.text());if(c.name)$('cname').value=c.name;
-    if(Array.isArray(c.columns)&&c.columns.length){
-      c.columns.forEach(col=>{const key=col.key||col.label;if(key&&!RESERVED.includes(key)&&!cols.some(x=>x.key===key))cols.push({key,label:col.label||key,type:col.type||'text'});});
+    if(Array.isArray(c.columns)){
+      c.columns.forEach(col=>{const key=String(col.key||col.label||'');let type=String(col.type||'text').toLowerCase();
+        if(!['text','tags','date'].includes(type))type='text';
+        if(key&&!RESERVED.includes(key)&&!cols.some(x=>x.key===key))cols.push({key,label:String(col.label||key),type});});
     }
     const byPath=new Map(items.map(i=>[i.path,i]));
-    (c.items||[]).forEach(x=>{const p=x.path||x.name;const prev=byPath.get(p);
-      const rec={cid:x.cid,name:x.name,path:p,size:x.size,type:x.type||''};
-      cols.forEach(col=>rec[col.key]=x[col.key]!==undefined?x[col.key]:(col.type==='tags'?[]:''));
+    (c.items||[]).forEach(x=>{if(!x||x.cid==null)return;const p=String(x.path||x.name||'');const prev=byPath.get(p);
+      const rec={cid:String(x.cid),name:String(x.name||''),path:p,size:+x.size||0,type:String(x.type||'')};
+      cols.forEach(col=>rec[col.key]=col.type==='tags'?asArray(x[col.key]):(x[col.key]!=null?String(x[col.key]):''));
       if(prev)Object.assign(prev,rec);else{items.push(rec);byPath.set(p,rec);}});
     render();
   }catch(err){alert('Invalid catalog JSON')} e.target.value='';});
