@@ -1,0 +1,121 @@
+{
+  "lumen_catalog": "1",
+  "name": "Public Domain Library",
+  "created": "2026-07-08T17:26:45.797Z",
+  "count": 8,
+  "total_size": 3300261,
+  "items": [
+    {
+      "cid": "QmNNjMmhWpK83YPj5DSZJcZNmsBedxFyNKXDnRcHfGpt9o",
+      "name": "A_Tale_of_Two_Cities.epub",
+      "path": "A_Tale_of_Two_Cities.epub",
+      "size": 487621,
+      "type": "application/epub+zip",
+      "title": "A Tale of Two Cities",
+      "description": "Charles Dickens, 1859",
+      "tags": [
+        "fiction",
+        "classic",
+        "historical"
+      ]
+    },
+    {
+      "cid": "QmXQSdg938fbYq4Rm9ruAWqi58aDeH3X4bQkkz3zeZjHQY",
+      "name": "Alice_s_Adventures_in_Wonderland.epub",
+      "path": "Alice_s_Adventures_in_Wonderland.epub",
+      "size": 136726,
+      "type": "application/epub+zip",
+      "title": "Alice's Adventures in Wonderland",
+      "description": "Lewis Carroll, 1865",
+      "tags": [
+        "fiction",
+        "classic",
+        "fantasy"
+      ]
+    },
+    {
+      "cid": "QmS7BXzcJnmArHPv6inkyuq8xBiKqkiLwK4mfyHC4URoxz",
+      "name": "Dracula.epub",
+      "path": "Dracula.epub",
+      "size": 433250,
+      "type": "application/epub+zip",
+      "title": "Dracula",
+      "description": "Bram Stoker, 1897",
+      "tags": [
+        "fiction",
+        "classic",
+        "horror"
+      ]
+    },
+    {
+      "cid": "QmPB9ACbgz3cLFhn3x2VUsBRwiV6bSaSK3zLNET7KM5oMG",
+      "name": "Frankenstein.epub",
+      "path": "Frankenstein.epub",
+      "size": 356363,
+      "type": "application/epub+zip",
+      "title": "Frankenstein",
+      "description": "Mary Shelley, 1818",
+      "tags": [
+        "fiction",
+        "classic",
+        "horror"
+      ]
+    },
+    {
+      "cid": "QmQGKaHNHmn1rRWN3iBpWLigUHpQYQqHESN4Dkhq5AomM2",
+      "name": "Moby_Dick.epub",
+      "path": "Moby_Dick.epub",
+      "size": 727431,
+      "type": "application/epub+zip",
+      "title": "Moby-Dick; or, The Whale",
+      "description": "Herman Melville, 1851",
+      "tags": [
+        "fiction",
+        "classic",
+        "adventure"
+      ]
+    },
+    {
+      "cid": "QmYDtAFofibWKyF7r5tSfJfhXFxz2gPvDqtsobbb4hS8Nd",
+      "name": "Pride_and_Prejudice.epub",
+      "path": "Pride_and_Prejudice.epub",
+      "size": 558543,
+      "type": "application/epub+zip",
+      "title": "Pride and Prejudice",
+      "description": "Jane Austen, 1813",
+      "tags": [
+        "fiction",
+        "classic",
+        "romance"
+      ]
+    },
+    {
+      "cid": "Qme8jQbvFnLCpjHN6S7JAFgTvjmgYNSUaFoNpLdTTvdMD1",
+      "name": "The_Adventures_of_Sherlock_Holmes.epub",
+      "path": "The_Adventures_of_Sherlock_Holmes.epub",
+      "size": 311586,
+      "type": "application/epub+zip",
+      "title": "The Adventures of Sherlock Holmes",
+      "description": "Arthur Conan Doyle, 1892",
+      "tags": [
+        "fiction",
+        "classic",
+        "mystery"
+      ]
+    },
+    {
+      "cid": "QmWSTxnwBycWBKnmweNc9k14Yyn5uAZCb7wpdXZGBSxKX5",
+      "name": "The_Adventures_of_Tom_Sawyer.epub",
+      "path": "The_Adventures_of_Tom_Sawyer.epub",
+      "size": 288741,
+      "type": "application/epub+zip",
+      "title": "The Adventures of Tom Sawyer",
+      "description": "Mark Twain, 1876",
+      "tags": [
+        "fiction",
+        "classic",
+        "adventure"
+      ]
+    }
+  ]
+}

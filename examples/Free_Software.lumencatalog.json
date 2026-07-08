@@ -1,0 +1,51 @@
+{
+  "lumen_catalog": "1",
+  "name": "Free Software",
+  "created": "2026-07-08T17:47:02.896Z",
+  "count": 3,
+  "total_size": 47272434,
+  "items": [
+    {
+      "cid": "QmUSrLv4JQPfbFbi5EvrZQgTnWUiTFy5oZG9qSVKDeYAyk",
+      "name": "Core-current.iso",
+      "path": "Core-current.iso",
+      "size": 18616320,
+      "type": "application/x-iso9660-image",
+      "title": "Core (Tiny Core, CLI)",
+      "description": "Command-line Linux base, ~17 MB — GPL",
+      "tags": [
+        "linux",
+        "opensource",
+        "iso"
+      ]
+    },
+    {
+      "cid": "Qmewy9BNXzg5drKHBJRNdNeHr1Khxp6rcQBtHNbmfbP47v",
+      "name": "TinyCore-current.iso",
+      "path": "TinyCore-current.iso",
+      "size": 25165824,
+      "type": "application/x-iso9660-image",
+      "title": "Tiny Core Linux",
+      "description": "Minimal Linux desktop, ~24 MB — GPL",
+      "tags": [
+        "linux",
+        "opensource",
+        "iso"
+      ]
+    },
+    {
+      "cid": "QmeouLTaNLoRwU9NrrWuf8pWBaV6LFQNT4RQTiT91Bwxhh",
+      "name": "alpine-minirootfs-3.20.3-x86_64.tar.gz",
+      "path": "alpine-minirootfs-3.20.3-x86_64.tar.gz",
+      "size": 3490290,
+      "type": "",
+      "title": "Alpine Linux minirootfs 3.20",
+      "description": "Tiny security-oriented Linux root filesystem — MIT/others",
+      "tags": [
+        "linux",
+        "opensource",
+        "container"
+      ]
+    }
+  ]
+}

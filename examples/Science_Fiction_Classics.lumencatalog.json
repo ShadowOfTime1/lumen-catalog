@@ -1,0 +1,74 @@
+{
+  "lumen_catalog": "1",
+  "name": "Science Fiction Classics",
+  "created": "2026-07-08T17:27:17.806Z",
+  "count": 5,
+  "total_size": 1029166,
+  "items": [
+    {
+      "cid": "QmNkjsGABYLKB5P69TURB7xJVX18ud7GCgDQCJGKj4CLvd",
+      "name": "20000_Leagues_Under_the_Sea.epub",
+      "path": "20000_Leagues_Under_the_Sea.epub",
+      "size": 370666,
+      "type": "application/epub+zip",
+      "title": "Twenty Thousand Leagues Under the Sea",
+      "description": "Jules Verne, 1870",
+      "tags": [
+        "scifi",
+        "adventure"
+      ]
+    },
+    {
+      "cid": "Qmct5ctj73bHmFhUeuvN1sG4yDqFmnbGcNim76R1V4qsaH",
+      "name": "Anthem.epub",
+      "path": "Anthem.epub",
+      "size": 111461,
+      "type": "application/epub+zip",
+      "title": "Anthem",
+      "description": "Ayn Rand, 1938",
+      "tags": [
+        "scifi",
+        "dystopia"
+      ]
+    },
+    {
+      "cid": "QmWn2V6sDPkB5YKWJEF7AGHJeen2MCGFkM23TVLdM8b6WH",
+      "name": "Dr_Jekyll_and_Mr_Hyde.epub",
+      "path": "Dr_Jekyll_and_Mr_Hyde.epub",
+      "size": 142433,
+      "type": "application/epub+zip",
+      "title": "The Strange Case of Dr Jekyll and Mr Hyde",
+      "description": "R. L. Stevenson, 1886",
+      "tags": [
+        "scifi",
+        "horror"
+      ]
+    },
+    {
+      "cid": "QmRCarqM1Lc1xiD9w8JTAXow1sKb3NLascx5KECrbT5ghs",
+      "name": "The_Time_Machine.epub",
+      "path": "The_Time_Machine.epub",
+      "size": 162548,
+      "type": "application/epub+zip",
+      "title": "The Time Machine",
+      "description": "H. G. Wells, 1895",
+      "tags": [
+        "scifi",
+        "classic"
+      ]
+    },
+    {
+      "cid": "QmPZrLEPggm2tGdpD3TkQ6RrtwjPfZMDNKL5cbDte9KjBe",
+      "name": "War_of_the_Worlds.epub",
+      "path": "War_of_the_Worlds.epub",
+      "size": 242058,
+      "type": "application/epub+zip",
+      "title": "The War of the Worlds",
+      "description": "H. G. Wells, 1898",
+      "tags": [
+        "scifi",
+        "classic"
+      ]
+    }
+  ]
+}

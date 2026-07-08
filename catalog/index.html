@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen Catalog — build an uncensorable content catalog</title>
+<style>
+  :root{--bg:#0a0f0d;--panel:#0f1712;--card:#111c16;--lime:#8ef06a;--green:#39b86a;--ink:#e8f5e9;--muted:#7f9c87;--line:#1c2b22;--edit:#0d1712}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1100px 560px at 50% -10%,#12281c,var(--bg) 55%);color:var(--ink);
+    font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:22px 16px 60px}
+  .wrap{max-width:1180px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:20px}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  h1 b{background:linear-gradient(90deg,var(--lime),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:13px;margin-top:5px;max-width:62ch}
+  .btns{display:flex;gap:8px;flex-wrap:wrap}
+  button,.btn{font:inherit;font-weight:700;font-size:13px;cursor:pointer;border-radius:9px;padding:9px 15px;border:1px solid var(--line);background:var(--card);color:var(--ink);display:inline-flex;gap:7px;align-items:center}
+  button:hover,.btn:hover{border-color:var(--lime)}
+  .primary{background:var(--lime);color:#04120a;border-color:var(--lime)}
+  .primary:hover{background:#a6f57e}
+  .bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .drop{flex:1;min-width:260px;border:1.5px dashed var(--line);border-radius:12px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);transition:border-color .15s}
+  .drop.hot{border-color:var(--lime)}
+  .drop .t{font-weight:700}.drop .d{color:var(--muted);font-size:12.5px;margin-top:2px}
+  input[type=text],input.name{background:var(--edit);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:9px 12px;font:inherit}
+  input[type=text]:focus,input.name:focus{outline:none;border-color:var(--lime)}
+  .meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px;color:var(--muted);font-size:12.5px}
+  .meta .name{width:220px}
+  .search{flex:1;min-width:180px}
+  .tablewrap{border:1px solid var(--line);border-radius:12px;overflow:auto;background:var(--card)}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+  th{text-align:left;color:var(--muted);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--card)}
+  td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  .cid{font-family:ui-monospace,monospace;color:var(--lime);font-size:12px;white-space:nowrap}
+  .fn{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pth{color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sz{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  td.ed input{width:100%;min-width:120px;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--ink);padding:5px 7px;font:inherit}
+  td.ed input:hover{border-color:var(--line)} td.ed input:focus{outline:none;border-color:var(--lime);background:var(--edit)}
+  .empty{padding:44px 20px;text-align:center;color:var(--muted)}
+  .prog{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:12px;display:none}
+  .prog.on{display:block}.prog i{display:block;height:100%;background:var(--lime);width:0;transition:width .2s}
+  .pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px}
+  footer{margin-top:24px;color:var(--muted);font-size:12px;text-align:center}
+  a{color:var(--lime);text-decoration:none}
+  .del{color:var(--muted);cursor:pointer;border:0;background:0;padding:4px 8px}.del:hover{color:#ff7a7a}
+  .addcol{font-size:12.5px;padding:8px 12px}
+  .colx{color:var(--muted);cursor:pointer;font-size:10px;margin-left:4px}.colx:hover{color:#ff7a7a}
+  th{white-space:nowrap}
+  .how{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:2px 18px}
+  .how summary{cursor:pointer;padding:14px 0;font-weight:700;color:var(--ink);list-style:none}
+  .how summary::-webkit-details-marker{display:none}
+  .how summary::before{content:"＋ ";color:var(--lime)}
+  .how[open] summary::before{content:"－ "}
+  .how ol{margin:0 0 16px 18px;color:var(--muted);font-size:13px;line-height:1.7}
+  .how li{margin-bottom:6px}
+  @media(max-width:640px){
+    header{flex-direction:column}
+    .btns{width:100%}.btns .btn,.btns button{flex:1;justify-content:center}
+    .meta .name{width:100%}
+  }
+  ::-webkit-scrollbar{height:9px;width:9px}::-webkit-scrollbar-thumb{background:#1e2e24;border-radius:9px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Lumen <b>Catalog</b></h1>
+      <div class="sub">Pick a folder — your browser computes each file's IPFS CID locally (nothing is uploaded). Add metadata, then export a portable catalog. Content references are immutable; metadata stays yours.</div>
+    </div>
+    <div class="btns">
+      <label class="btn">↥ Import JSON<input id="imp" type="file" accept="application/json" hidden></label>
+      <button id="clear">✕ Clear</button>
+      <button id="exp" class="primary">↧ Export JSON</button>
+    </div>
+  </header>
+
+  <div class="bar">
+    <label class="drop" id="drop">
+      <div><div class="t">📁 Add a folder</div><div class="d">Choose a folder — files are hashed locally into CIDs. Re-adding merges &amp; keeps your metadata.</div></div>
+      <span class="btn primary">Choose folder</span>
+      <input id="folder" type="file" webkitdirectory multiple hidden>
+    </label>
+  </div>
+
+  <div class="prog" id="prog"><i id="progbar"></i></div>
+
+  <div class="meta">
+    <input class="name" id="cname" type="text" placeholder="Catalog name" value="Untitled catalog">
+    <input class="search" id="search" type="text" placeholder="Search catalog…">
+    <span class="pill"><b id="cnt">0</b> files</span>
+    <span class="pill"><b id="tot">0</b></span>
+    <button class="btn addcol" id="addcol" title="Add a metadata column">＋ Column</button>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead id="thead"></thead>
+      <tbody id="rows"><tr><td colspan="9" class="empty">No files yet — choose a folder to start building your catalog.</td></tr></tbody>
+    </table>
+  </div>
+
+  <details class="how" id="how">
+    <summary>How to publish your catalog</summary>
+    <ol>
+      <li>Pick a folder — every file is hashed into an immutable IPFS CID, right here in your browser. Nothing is uploaded.</li>
+      <li>Fill in titles, descriptions and tags. Your metadata stays in the exported file, the content stays wherever it already is.</li>
+      <li>Export the catalog JSON and pin your files + the catalog to IPFS (or keep seeding them from your own node).</li>
+      <li>Share the catalog CID — anyone can open it in <a href="lumen://index.lmn">index.lmn</a> and pull the files straight to their drive. Nothing to host, nothing to take down.</li>
+    </ol>
+  </details>
+
+  <footer>Runs 100% in your browser · IPFS-native · lumen://catalog.lmn · by <a href="https://shadowoftime.dev">ShadowOfTime</a></footer>
+</div>
+
+<script src="hash.bundle.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let items=[]; // {cid,name,path,size,type, ...metadata by column key}
+const RESERVED=['cid','name','path','size','type'];
+let cols=[{key:'title',label:'Title',type:'text'},{key:'description',label:'Description',type:'text'},{key:'tags',label:'Tags',type:'tags'}];
+const fmtSize=b=>{b=+b;return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':b<1073741824?(b/1048576).toFixed(1)+' MB':(b/1073741824).toFixed(2)+' GB'};
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cellVal=(i,c)=>c.type==='tags'?(i[c.key]||[]).join(', '):(i[c.key]||'');
+
+function totalSize(){return items.reduce((s,i)=>s+ (+i.size||0),0)}
+function renderHead(){
+  $('thead').innerHTML=`<tr><th>CID</th><th>Filename</th><th>Path</th><th>Size</th><th>Type</th>${
+    cols.map((c,ci)=>`<th>${esc(c.label)}<span class="colx" data-col="${ci}" title="remove column">✕</span></th>`).join('')}<th></th></tr>`;
+}
+function render(){
+  renderHead();
+  const q=$('search').value.trim().toLowerCase();
+  const span=6+cols.length;
+  const rows=items.filter(i=>!q||[i.name,i.path,...cols.map(c=>cellVal(i,c))].join(' ').toLowerCase().includes(q));
+  $('cnt').textContent=items.length; $('tot').textContent=fmtSize(totalSize());
+  if(!items.length){$('rows').innerHTML=`<tr><td colspan="${span}" class="empty">No files yet — choose a folder to start building your catalog.</td></tr>`;return;}
+  $('rows').innerHTML=rows.map(i=>{const idx=items.indexOf(i);return `<tr data-i="${idx}">
+    <td><span class="cid" title="${i.cid}">${i.cid.slice(0,10)}…${i.cid.slice(-6)}</span></td>
+    <td class="fn" title="${esc(i.name)}">${esc(i.name)}</td>
+    <td class="pth" title="${esc(i.path)}">${esc(i.path)}</td>
+    <td class="sz">${fmtSize(i.size)}</td>
+    <td class="sz">${esc(i.type||'—')}</td>
+    ${cols.map(c=>`<td class="ed"><input data-k="${c.key}" data-type="${c.type}"${c.type==='date'?' type="date"':''} value="${esc(cellVal(i,c))}" placeholder="${esc(c.type==='tags'?'tag, tag':c.label.toLowerCase())}"></td>`).join('')}
+    <td><button class="del" title="remove">✕</button></td></tr>`}).join('');
+}
+$('rows').addEventListener('input',e=>{const tr=e.target.closest('tr');if(!tr)return;const i=items[+tr.dataset.i];const k=e.target.dataset.k;
+  if(e.target.dataset.type==='tags')i[k]=e.target.value.split(',').map(s=>s.trim()).filter(Boolean);else i[k]=e.target.value;});
+$('rows').addEventListener('click',e=>{if(e.target.classList.contains('del')){const tr=e.target.closest('tr');items.splice(+tr.dataset.i,1);render();}});
+$('thead').addEventListener('click',e=>{if(e.target.classList.contains('colx')){cols.splice(+e.target.dataset.col,1);render();}});
+$('search').addEventListener('input',render);
+$('addcol').addEventListener('click',()=>{
+  const raw=prompt('New column — name (append “:date” or “:tags” to set the type):');
+  if(!raw)return;
+  let [label,type]=raw.split(':'); label=(label||'').trim(); type=(type||'text').trim().toLowerCase();
+  if(!label)return; if(!['text','tags','date'].includes(type))type='text';
+  let key=label.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||('field'+cols.length);
+  while(RESERVED.includes(key)||cols.some(c=>c.key===key))key+='_';
+  cols.push({key,label,type});
+  items.forEach(i=>{if(i[key]===undefined)i[key]=type==='tags'?[]:''});
+  render();
+});
+
+async function addFiles(fileList){
+  const files=[...fileList]; if(!files.length)return;
+  $('prog').classList.add('on'); let done=0;
+  const existing=new Map(items.map(i=>[i.path,i]));
+  for(const f of files){
+    try{
+      const buf=new Uint8Array(await f.arrayBuffer());
+      const cid=await window.ipfsHash(buf);
+      const path=f.webkitRelativePath||f.name;
+      const prev=existing.get(path);
+      if(prev){Object.assign(prev,{cid,size:f.size,type:f.type||''});}
+      else{const rec={cid,name:f.name,path,size:f.size,type:f.type||''};
+        cols.forEach(c=>rec[c.key]=c.type==='tags'?[]:'');
+        items.push(rec);existing.set(path,rec);}
+    }catch(err){console.warn('hash fail',f.name,err);}
+    done++; $('progbar').style.width=Math.round(done/files.length*100)+'%';
+    if(done%5===0)render();
+  }
+  render(); setTimeout(()=>{$('prog').classList.remove('on');$('progbar').style.width='0';},400);
+}
+$('folder').addEventListener('change',e=>addFiles(e.target.files));
+const drop=$('drop');
+;['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('hot')}));
+;['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('hot')}));
+drop.addEventListener('drop',async e=>{const its=e.dataTransfer.items;const fs=[];
+  for(const it of its){const f=it.getAsFile&&it.getAsFile();if(f)fs.push(f);} if(fs.length)addFiles(fs);});
+
+$('exp').addEventListener('click',()=>{
+  const cat={lumen_catalog:'1',name:$('cname').value||'Untitled catalog',created:new Date().toISOString(),
+    count:items.length,total_size:totalSize(),
+    columns:cols.map(c=>({key:c.key,label:c.label,type:c.type})),
+    items:items.map(i=>{const o={cid:i.cid,name:i.name,path:i.path,size:i.size,type:i.type};
+      cols.forEach(c=>o[c.key]=i[c.key]!==undefined?i[c.key]:(c.type==='tags'?[]:''));return o;})};
+  const blob=new Blob([JSON.stringify(cat,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=(cat.name.replace(/[^\w.-]+/g,'_')||'catalog')+'.lumencatalog.json';a.click();
+});
+$('imp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;
+  try{const c=JSON.parse(await f.text());if(c.name)$('cname').value=c.name;
+    if(Array.isArray(c.columns)&&c.columns.length){
+      c.columns.forEach(col=>{const key=col.key||col.label;if(key&&!RESERVED.includes(key)&&!cols.some(x=>x.key===key))cols.push({key,label:col.label||key,type:col.type||'text'});});
+    }
+    const byPath=new Map(items.map(i=>[i.path,i]));
+    (c.items||[]).forEach(x=>{const p=x.path||x.name;const prev=byPath.get(p);
+      const rec={cid:x.cid,name:x.name,path:p,size:x.size,type:x.type||''};
+      cols.forEach(col=>rec[col.key]=x[col.key]!==undefined?x[col.key]:(col.type==='tags'?[]:''));
+      if(prev)Object.assign(prev,rec);else{items.push(rec);byPath.set(p,rec);}});
+    render();
+  }catch(err){alert('Invalid catalog JSON')} e.target.value='';});
+$('clear').addEventListener('click',()=>{if(items.length&&confirm('Clear all files?')){items=[];render();}});
+$('cname').addEventListener('input',()=>{});
+render();
+</script>
+</body>
+</html>

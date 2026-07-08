@@ -1,0 +1,10 @@
+{
+  "name": "lumen-catalog-hash-bundle",
+  "private": true,
+  "description": "Bundles ipfs-only-hash for the browser so the catalog builder can compute IPFS CIDs client-side.",
+  "scripts": {
+    "build": "esbuild entry.js --bundle --format=iife --platform=browser --minify --outfile=../../catalog/hash.bundle.js"
+  },
+  "dependencies": { "ipfs-only-hash": "^4.0.0" },
+  "devDependencies": { "esbuild": "^0.23.0" }
+}

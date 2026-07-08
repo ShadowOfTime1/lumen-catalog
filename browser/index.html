@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen Index — browse and pull content from the decentralized web</title>
+<style>
+  :root{--bg:#0a0f0d;--panel:#0f1712;--card:#111c16;--card2:#0d1712;--lime:#8ef06a;--green:#39b86a;--ink:#e8f5e9;--muted:#7f9c87;--line:#1c2b22;--sel:rgba(142,240,106,.09)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1100px 560px at 50% -10%,#12281c,var(--bg) 55%);color:var(--ink);
+    font:14.5px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:24px 16px 90px}
+  .wrap{max-width:1000px;margin:0 auto}
+  header{margin-bottom:18px}
+  h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+  h1 b{background:linear-gradient(90deg,var(--lime),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:13px;margin-top:5px;max-width:66ch}
+  .searchbar{position:relative;margin:18px 0 6px}
+  .searchbar svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.5}
+  .search{width:100%;background:#0d1712;border:1px solid var(--line);border-radius:11px;color:var(--ink);padding:13px 14px 13px 42px;font:inherit}
+  .search:focus{outline:none;border-color:var(--lime)}
+  .stat{color:var(--muted);font-size:12px;margin:0 0 12px 2px}
+  .addcid{display:flex;gap:8px;margin-bottom:8px}
+  .addcid input{flex:1;background:#0d1712;border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:9px 12px;font:inherit;font-size:13px}
+  .addcid input:focus{outline:none;border-color:var(--lime)}
+  .addcid .btn{white-space:nowrap}
+  h2{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin:22px 0 12px 2px;display:flex;gap:8px;align-items:center}
+  .back{cursor:pointer;color:var(--lime);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
+  .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:12px}
+  .cat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px;cursor:pointer;transition:border-color .15s,transform .1s;position:relative}
+  .cat:hover{border-color:var(--lime);transform:translateY(-2px)}
+  .cat .nm{font-weight:800;font-size:16px;padding-right:14px}
+  .cat .meta{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .cat .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px}
+  .tag{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:11px;color:var(--muted)}
+  .dotav{position:absolute;top:14px;right:14px;width:7px;height:7px;border-radius:50%;background:#3a4a40}
+  .dotav.up{background:var(--lime);box-shadow:0 0 7px var(--lime)}
+  .rmcat{position:absolute;bottom:12px;right:12px;border:0;background:0;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:6px}
+  .rmcat:hover{color:#ff7a7a;background:var(--panel)}
+  .mine{font-size:10px;font-weight:700;color:var(--lime);background:rgba(142,240,106,.12);border-radius:5px;padding:1px 6px;vertical-align:middle}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-top:6px}
+  .prow{display:grid;grid-template-columns:26px 1fr auto;gap:12px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);transition:background .12s}
+  .prow:first-child{border-top:0}
+  .prow:hover{background:var(--card2)}
+  .prow.sel{background:var(--sel)}
+  .prow .t{font-weight:600}
+  .prow .d{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .prow .badge{display:inline-block;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:11px;color:var(--muted);margin-right:7px}
+  .prow .cid{font-family:ui-monospace,monospace;color:var(--lime);font-size:11.5px;margin-top:4px;word-break:break-all}
+  .prow .act{display:flex;gap:7px;align-items:center;white-space:nowrap}
+  .sz{color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums;margin-right:2px}
+  input[type=checkbox]{appearance:none;width:18px;height:18px;border:1.5px solid var(--line);border-radius:5px;cursor:pointer;position:relative;background:var(--card2);flex:none}
+  input[type=checkbox]:checked{background:var(--lime);border-color:var(--lime)}
+  input[type=checkbox]:checked::after{content:"✓";position:absolute;color:#04120a;font-size:13px;font-weight:900;left:2.5px;top:-1px}
+  a.btn,button.btn{font:inherit;font-weight:700;font-size:12.5px;cursor:pointer;border-radius:8px;padding:7px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);text-decoration:none;display:inline-flex;gap:6px;align-items:center}
+  a.btn:hover,button.btn:hover{border-color:var(--lime)}
+  .btn.dl{background:var(--lime);color:#04120a;border-color:var(--lime)}.btn.dl:hover{background:#a6f57e}
+  .btn.ghost{color:var(--muted);padding:7px 10px}
+  .dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap;background:var(--card2)}
+  .dhead .nm{font-weight:800;font-size:17px}.dhead .meta{color:var(--muted);font-size:12.5px}
+  .selall{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12.5px;cursor:pointer}
+  .loading,.empty{padding:26px 18px;color:var(--muted);text-align:center}
+  .note{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;color:var(--muted);font-size:12.5px;margin:16px 0}
+  .selbar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(120%);transition:transform .22s cubic-bezier(.2,.9,.3,1);
+    background:#0f1a13;border:1px solid var(--lime);border-radius:13px;padding:11px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 34px rgba(0,0,0,.5);z-index:20;max-width:calc(100% - 28px)}
+  .selbar.on{transform:translateX(-50%) translateY(0)}
+  .selbar .c{font-weight:700}.selbar .sz2{color:var(--muted);font-size:12.5px}
+  footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
+  a{color:var(--lime);text-decoration:none}
+  @media(max-width:620px){
+    .prow{grid-template-columns:24px 1fr;gap:10px}
+    .prow .act{grid-column:2;justify-content:flex-start;margin-top:8px;flex-wrap:wrap}
+    .cats{grid-template-columns:1fr 1fr}
+  }
+  ::-webkit-scrollbar{width:9px}::-webkit-scrollbar-thumb{background:#1e2e24;border-radius:9px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Lumen <b>Index</b></h1>
+    <div class="sub">Browse content catalogs and pull files straight to your drive by their CID — served peer-to-peer, no servers, nothing that can be taken down. Catalogs are built with <a href="lumen://catalog.lmn">catalog.lmn</a>.</div>
+  </header>
+
+  <div class="searchbar">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8ef06a" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input class="search" id="search" type="text" placeholder="Search everything — catalogs, titles, authors, tags…" autocomplete="off">
+  </div>
+  <div class="stat" id="stat">Loading catalogs…</div>
+
+  <div class="addcid">
+    <input id="addin" type="text" placeholder="Open any catalog by its CID…" autocomplete="off" spellcheck="false">
+    <button class="btn" id="addbtn">＋ Add catalog</button>
+  </div>
+
+  <div id="view"></div>
+
+  <footer>Lumen Index · served on-chain from IPFS · lumen://index.lmn · by <a href="https://shadowoftime.dev">ShadowOfTime</a> validator</footer>
+</div>
+
+<div class="selbar" id="selbar">
+  <span class="c"><span id="selc">0</span> selected</span><span class="sz2" id="selsz"></span>
+  <button class="btn ghost" id="selcopy">⧉ Copy CIDs</button>
+  <button class="btn ghost" id="selclear">Clear</button>
+  <button class="btn dl" id="seldl">⇩ Download selected</button>
+</div>
+
+<script id="registry" type="application/json">{"catalogs":[{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmRtczenYxMm5cLtqXGJPbCvGwCUuAeMV8AeQrNKMyDV2R","name":"Public Domain Library","count":8,"size":3300261,"tags":["fiction","classic","historical","fantasy","horror","adventure"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
+<script>
+const GATEWAYS=['https://dweb.link/ipfs/','https://ipfs.io/ipfs/','https://cloudflare-ipfs.com/ipfs/'];
+const REG=JSON.parse(document.getElementById('registry').textContent).catalogs||[];
+const $=id=>document.getElementById(id);
+const fmt=b=>{b=+b||0;return b<1024?b+' B':b<1048576?(b/1024).toFixed(0)+' KB':b<1073741824?(b/1048576).toFixed(1)+' MB':(b/1073741824).toFixed(2)+' GB'};
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cat={};          // cid -> catalog json (loaded)
+const sel=new Map();   // fileCid -> {name,size}
+let open=null;         // currently open catalog cid, or null
+
+async function fetchCID(cid){
+  try{const r=await fetch('ipfs://'+cid);if(r.ok)return await r.json();}catch{}
+  for(const g of GATEWAYS){try{const r=await fetch(g+cid,{signal:AbortSignal.timeout(12000)});if(r.ok)return await r.json();}catch{}}
+  throw new Error('unavailable');
+}
+const dlUrl=(cid,name)=>GATEWAYS[0]+cid+'?filename='+encodeURIComponent(name)+'&download=true';
+
+function setStat(){
+  const up=REG.filter(c=>c.up).length, files=REG.filter(c=>cat[c.cid]).reduce((s,c)=>s+cat[c.cid].items.length,0);
+  $('stat').textContent=`${up}/${REG.length} catalogs online · ${files} files · ${fmt(REG.reduce((s,c)=>s+(c.size||0),0))} total`;
+}
+// preload every catalog so global search works instantly
+async function preload(){
+  await Promise.all(REG.map(async c=>{
+    if(cat[c.cid]){c.up=true;return;}
+    try{ cat[c.cid]=await fetchCID(c.cid); c.up=true; }catch{ c.up=false; }
+  }));
+  setStat(); render();
+}
+
+// user-added catalogs (by CID), kept in this browser
+const LS='lumen_index_custom';
+function saveCustom(){ try{ localStorage.setItem(LS, JSON.stringify(REG.filter(c=>c.custom).map(({cid,name,count,size,tags})=>({cid,name,count,size,tags})))); }catch{} }
+function loadCustom(){ try{ (JSON.parse(localStorage.getItem(LS))||[]).forEach(c=>{ if(!REG.find(x=>x.cid===c.cid)) REG.push({...c,custom:true}); }); }catch{} }
+async function addByCid(raw){
+  const cid=(raw||'').trim().replace(/^ipfs:\/\//,'').replace(/\/.*$/,'');
+  if(!cid) return;
+  if(REG.find(c=>c.cid===cid)){ $('addin').value=''; openCat(cid); return; }
+  const btn=$('addbtn'); btn.textContent='…'; btn.disabled=true;
+  try{
+    const k=await fetchCID(cid);
+    if(!k||!Array.isArray(k.items)) throw 0;
+    const entry={cid,name:k.name||'Catalog',count:k.items.length,size:k.total_size||0,
+      tags:[...new Set(k.items.flatMap(i=>i.tags||[]))].slice(0,6),up:true,custom:true};
+    REG.push(entry); cat[cid]=k; saveCustom();
+    $('addin').value=''; setStat(); render(); openCat(cid);
+  }catch{ $('addin').style.borderColor='#ff7a7a'; setTimeout(()=>$('addin').style.borderColor='',1200); }
+  btn.textContent='＋ Add catalog'; btn.disabled=false;
+}
+function openCat(cid){ open=cid; $('search').value=''; render(); refreshSelbar(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function allFiles(){ return REG.filter(c=>cat[c.cid]).flatMap(c=>cat[c.cid].items.map(f=>({...f,_cat:c.name,_ccid:c.cid}))); }
+const matchF=(f,q)=>((f.title||f.name)+' '+(f.description||'')+' '+(f.tags||[]).join(' ')+' '+(f._cat||'')).toLowerCase().includes(q);
+const matchC=(c,q)=>(c.name+' '+(c.tags||[]).join(' ')).toLowerCase().includes(q);
+
+function fileRow(f,withCat){
+  const on=sel.has(f.cid);
+  return `<div class="prow${on?' sel':''}" data-cid="${f.cid}" data-name="${esc(f.name)}" data-size="${f.size}">
+    <input type="checkbox" class="ck"${on?' checked':''}>
+    <div><div class="t">${esc(f.title||f.name)}</div>
+      <div class="d">${withCat&&f._cat?`<span class="badge">${esc(f._cat)}</span>`:''}${esc(f.description||'')}</div>
+      <div class="cid">${f.cid}</div></div>
+    <div class="act"><span class="sz">${fmt(f.size)}</span>
+      <button class="btn ghost copy" data-cid="${f.cid}" title="Copy CID">⧉</button>
+      <a class="btn" href="ipfs://${f.cid}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
+      <a class="btn dl" href="${dlUrl(f.cid,f.name)}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
+}
+function catCard(c){
+  return `<div class="cat" data-cid="${c.cid}"><span class="dotav${c.up?' up':''}" title="${c.up?'online':'checking…'}"></span>
+    ${c.custom?`<button class="rmcat" data-rm="${c.cid}" title="Remove">✕</button>`:''}
+    <div class="nm">${esc(c.name)}${c.custom?' <span class="mine">added</span>':''}</div>
+    <div class="meta">${c.count||(cat[c.cid]?cat[c.cid].items.length:'?')} files · ${fmt(c.size)}</div>
+    <div class="tags">${(c.tags||[]).slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>`;
+}
+
+function render(){
+  const q=$('search').value.trim().toLowerCase();
+  const v=$('view');
+  if(q){ // global search across catalogs + files
+    const cs=REG.filter(c=>matchC(c,q));
+    const fs=allFiles().filter(f=>matchF(f,q));
+    let html='';
+    if(cs.length) html+=`<h2>Catalogs (${cs.length})</h2><div class="cats">${cs.map(catCard).join('')}</div>`;
+    html+=`<h2>Files (${fs.length})</h2>`;
+    html+= fs.length?`<div class="panel">${fs.map(f=>fileRow(f,true)).join('')}</div>`:`<div class="empty">Nothing matches “${esc(q)}”.</div>`;
+    v.innerHTML=html; return;
+  }
+  if(open&&cat[open]){ // catalog detail
+    const c=REG.find(x=>x.cid===open), k=cat[open];
+    v.innerHTML=`<h2><span class="back" id="back">← All catalogs</span></h2>
+      <div class="panel"><div class="dhead">
+        <div><div class="nm">${esc(k.name)}</div><div class="meta">${k.items.length} files · ${fmt(k.total_size)}</div></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <label class="selall"><input type="checkbox" id="ckall"> select all</label>
+          <button class="btn dl" id="dall">⇩ Download all</button></div>
+      </div>${k.items.map(f=>fileRow(f,false)).join('')}</div>`;
+    return;
+  }
+  // catalog grid
+  v.innerHTML=`<h2>Catalogs</h2>`+(REG.length?`<div class="cats">${REG.map(catCard).join('')}</div>
+    <div class="note">Files download over IPFS. In the Lumen browser they save straight to your drive; anywhere else the gateway link works. Tick files to grab several at once.</div>`
+    :`<div class="empty">No catalogs published yet.</div>`);
+}
+
+function refreshSelbar(){
+  $('selc').textContent=sel.size;
+  let s=0; sel.forEach(v=>s+=v.size||0);
+  $('selsz').textContent=sel.size?('· '+fmt(s)):'';
+  $('selbar').classList.toggle('on',sel.size>0);
+  document.querySelectorAll('.prow').forEach(r=>{const on=sel.has(r.dataset.cid);r.classList.toggle('sel',on);const ck=r.querySelector('.ck');if(ck)ck.checked=on;});
+  const ckall=$('ckall'); if(ckall&&open&&cat[open])ckall.checked=cat[open].items.every(f=>sel.has(f.cid));
+}
+function toggle(cid,name,size,on){ if(on)sel.set(cid,{name,size}); else sel.delete(cid); }
+
+$('view').addEventListener('click',async e=>{
+  const rm=e.target.closest('.rmcat');
+  if(rm){ const i=REG.findIndex(c=>c.cid===rm.dataset.rm); if(i>=0){REG.splice(i,1);delete cat[rm.dataset.rm];saveCustom();setStat();render();} return; }
+  const card=e.target.closest('.cat');
+  if(card){ openCat(card.dataset.cid); return; }
+  if(e.target.id==='back'){ open=null; render(); refreshSelbar(); return; }
+  const cp=e.target.closest('.copy');
+  if(cp){ try{await navigator.clipboard.writeText(cp.dataset.cid);cp.textContent='✓';setTimeout(()=>cp.textContent='⧉',900);}catch{} return; }
+  if(e.target.classList.contains('ck')){ const r=e.target.closest('.prow'); toggle(r.dataset.cid,r.dataset.name,+r.dataset.size,e.target.checked); refreshSelbar(); return; }
+  if(e.target.id==='ckall'){ const k=cat[open]; k.items.forEach(f=>toggle(f.cid,f.name,f.size,e.target.checked)); refreshSelbar(); return; }
+  if(e.target.id==='dall'){ bulk(cat[open].items); return; }
+});
+$('search').addEventListener('input',()=>{render();refreshSelbar();});
+function bulk(items){ items.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href='ipfs://'+f.cid;a.download=f.name;document.body.appendChild(a);a.click();a.remove();},i*300)); }
+$('seldl').addEventListener('click',()=>{const items=[...sel].map(([cid,v])=>({cid,name:v.name}));bulk(items);});
+$('selclear').addEventListener('click',()=>{sel.clear();refreshSelbar();});
+$('selcopy').addEventListener('click',async e=>{try{await navigator.clipboard.writeText([...sel.keys()].join('\n'));e.target.textContent='✓ Copied';setTimeout(()=>e.target.textContent='⧉ Copy CIDs',1100);}catch{}});
+$('addbtn').addEventListener('click',()=>addByCid($('addin').value));
+$('addin').addEventListener('keydown',e=>{if(e.key==='Enter')addByCid($('addin').value);});
+loadCustom(); render(); preload();
+</script>
+</body>
+</html>
