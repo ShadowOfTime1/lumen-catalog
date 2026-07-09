@@ -1,7 +1,7 @@
 {
   "lumen_catalog": "1",
   "name": "Public Domain Library",
-  "created": "2026-07-09T14:05:01.058Z",
+  "created": "2026-07-09T17:38:42.649Z",
   "count": 18,
   "total_size": 7446762,
   "items": [
@@ -11,6 +11,7 @@
       "path": "A_Modest_Proposal.epub",
       "size": 107318,
       "type": "application/epub+zip",
+      "sha256": "809266ad0dff045885108a0a7a9405f145250293daf11cc4bc6dbaa49d30c0a9",
       "title": "A Modest Proposal",
       "description": "Jonathan Swift, 1729",
       "tags": [
@@ -24,6 +25,7 @@
       "path": "A_Tale_of_Two_Cities.epub",
       "size": 487621,
       "type": "application/epub+zip",
+      "sha256": "cf5b76679a021b11867b9a881e088595b122cd56b903b99eaf76deeab1d7b24a",
       "title": "A Tale of Two Cities",
       "description": "Charles Dickens, 1859",
       "tags": [
@@ -38,6 +40,7 @@
       "path": "Adventures_of_Huckleberry_Finn.epub",
       "size": 347404,
       "type": "application/epub+zip",
+      "sha256": "04e46aa79fa6afc70f4c273c94f571ce4ff160b860ad6e647b4963c88eca119a",
       "title": "Adventures of Huckleberry Finn",
       "description": "Mark Twain, 1884",
       "tags": [
@@ -52,6 +55,7 @@
       "path": "Alice_s_Adventures_in_Wonderland.epub",
       "size": 136726,
       "type": "application/epub+zip",
+      "sha256": "415c9fb39149148690c8d8cefa1b5bf2121ff6d55a2c9c23ab69923ec1045da3",
       "title": "Alice’s Adventures in Wonderland",
       "description": "Lewis Carroll, 1865",
       "tags": [
@@ -66,6 +70,7 @@
       "path": "Crime_and_Punishment.epub",
       "size": 651249,
       "type": "application/epub+zip",
+      "sha256": "4375146ccdcdc2d22d56109ebc6023877c1c0e7c86a3d570980fe4b1537e0514",
       "title": "Crime and Punishment",
       "description": "Fyodor Dostoevsky, 1866",
       "tags": [
@@ -80,6 +85,7 @@
       "path": "Dracula.epub",
       "size": 433250,
       "type": "application/epub+zip",
+      "sha256": "53651eb71b8e561900e3af1cda1f6763bf78315adb0fc98d1bdbf81008f4101a",
       "title": "Dracula",
       "description": "Bram Stoker, 1897",
       "tags": [
@@ -94,6 +100,7 @@
       "path": "Frankenstein.epub",
       "size": 356363,
       "type": "application/epub+zip",
+      "sha256": "734f9af9ddd26e872aaf523f4de9d8ea01aa29e101da577397a90b92a2c96eae",
       "title": "Frankenstein",
       "description": "Mary Shelley, 1818",
       "tags": [
@@ -108,6 +115,7 @@
       "path": "Great_Expectations.epub",
       "size": 554524,
       "type": "application/epub+zip",
+      "sha256": "ba498ca389485edb56274b31f9247dcaaa928cfa0aa10066a475990e99b9b242",
       "title": "Great Expectations",
       "description": "Charles Dickens, 1861",
       "tags": [
@@ -121,6 +129,7 @@
       "path": "Jane_Eyre.epub",
       "size": 607643,
       "type": "application/epub+zip",
+      "sha256": "80f96aae20e451dce34e69ac37f7f0cb82313c05cae2dba7b2fdf6ecf194ffce",
       "title": "Jane Eyre",
       "description": "Charlotte Brontë, 1847",
       "tags": [
@@ -135,6 +144,7 @@
       "path": "Little_Women.epub",
       "size": 550672,
       "type": "application/epub+zip",
+      "sha256": "754c062fbc9823c3b4447a72269fcbf596ca73bf1782b5025ed3175b933c933a",
       "title": "Little Women",
       "description": "Louisa May Alcott, 1868",
       "tags": [
@@ -148,6 +158,7 @@
       "path": "Metamorphosis.epub",
       "size": 158573,
       "type": "application/epub+zip",
+      "sha256": "5b264075345c3511e5099ae6e3092dbd7bacfc2cee871fc9a1c331c745406120",
       "title": "The Metamorphosis",
       "description": "Franz Kafka, 1915",
       "tags": [
@@ -161,6 +172,7 @@
       "path": "Moby_Dick.epub",
       "size": 727431,
       "type": "application/epub+zip",
+      "sha256": "e79097e7843b779b05b5b71d5a8a80a5264c2240b15e20f14b0fc96d93a63e99",
       "title": "Moby-Dick; or, The Whale",
       "description": "Herman Melville, 1851",
       "tags": [
@@ -175,6 +187,7 @@
       "path": "Pride_and_Prejudice.epub",
       "size": 558543,
       "type": "application/epub+zip",
+      "sha256": "65435c4dea7d3dbd2608c89adc07bdf871ef4ba92a2300d7417226d5b1589166",
       "title": "Pride and Prejudice",
       "description": "Jane Austen, 1813",
       "tags": [
@@ -189,6 +202,7 @@
       "path": "The_Adventures_of_Sherlock_Holmes.epub",
       "size": 311586,
       "type": "application/epub+zip",
+      "sha256": "e38ae7254fc37cc6d80a442b9545dc79ae6a5c0228635c3d2f9c6f7313eb66bc",
       "title": "The Adventures of Sherlock Holmes",
       "description": "Arthur Conan Doyle, 1892",
       "tags": [
@@ -203,6 +217,7 @@
       "path": "The_Adventures_of_Tom_Sawyer.epub",
       "size": 288741,
       "type": "application/epub+zip",
+      "sha256": "d15c56784f1b94253a7852b607743f3f5016dd04193427389702287c58b672ff",
       "title": "The Adventures of Tom Sawyer",
       "description": "Mark Twain, 1876",
       "tags": [
@@ -217,6 +232,7 @@
       "path": "The_Picture_of_Dorian_Gray.epub",
       "size": 460207,
       "type": "application/epub+zip",
+      "sha256": "2f678bdb98efdcfeb1d87f1efe9dc058b1014918a6e5d212eb1fb536d3f6c5e5",
       "title": "The Picture of Dorian Gray",
       "description": "Oscar Wilde, 1890",
       "tags": [
@@ -230,6 +246,7 @@
       "path": "Treasure_Island.epub",
       "size": 273950,
       "type": "application/epub+zip",
+      "sha256": "c11879b5876335d1b2d0f32d275c2e61e0b075c2483d2ed25d728a77cc4fb1fd",
       "title": "Treasure Island",
       "description": "Robert Louis Stevenson, 1883",
       "tags": [
@@ -244,6 +261,7 @@
       "path": "Wuthering_Heights.epub",
       "size": 434961,
       "type": "application/epub+zip",
+      "sha256": "a39e8ff36ee232976e99621faa06032917fc221281383645fa6eda0b7b3a5efd",
       "title": "Wuthering Heights",
       "description": "Emily Brontë, 1847",
       "tags": [

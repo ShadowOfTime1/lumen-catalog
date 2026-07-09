@@ -1,7 +1,7 @@
 {
   "lumen_catalog": "1",
   "name": "Science Fiction Classics",
-  "created": "2026-07-08T17:27:17.806Z",
+  "created": "2026-07-09T17:38:42.864Z",
   "count": 5,
   "total_size": 1029166,
   "items": [
@@ -11,6 +11,7 @@
       "path": "20000_Leagues_Under_the_Sea.epub",
       "size": 370666,
       "type": "application/epub+zip",
+      "sha256": "c72da13cb07458346bbc66b16176b85ca909f7a8087dee0e4174a032ea88999a",
       "title": "Twenty Thousand Leagues Under the Sea",
       "description": "Jules Verne, 1870",
       "tags": [
@@ -24,6 +25,7 @@
       "path": "Anthem.epub",
       "size": 111461,
       "type": "application/epub+zip",
+      "sha256": "75fcfd2d8f654518831081ac30ec0db1556ceb380fa221f6df09c7f59eddfc49",
       "title": "Anthem",
       "description": "Ayn Rand, 1938",
       "tags": [
@@ -37,6 +39,7 @@
       "path": "Dr_Jekyll_and_Mr_Hyde.epub",
       "size": 142433,
       "type": "application/epub+zip",
+      "sha256": "49d5684f1b75992c69b2ede5e4a6785e6a9d16b9bc118b5d572432b43cec502f",
       "title": "The Strange Case of Dr Jekyll and Mr Hyde",
       "description": "R. L. Stevenson, 1886",
       "tags": [
@@ -50,6 +53,7 @@
       "path": "The_Time_Machine.epub",
       "size": 162548,
       "type": "application/epub+zip",
+      "sha256": "23f868048e9883965b8d6df55a9ddd526911bbe61be7ec942e136ba54f232d70",
       "title": "The Time Machine",
       "description": "H. G. Wells, 1895",
       "tags": [
@@ -63,6 +67,7 @@
       "path": "War_of_the_Worlds.epub",
       "size": 242058,
       "type": "application/epub+zip",
+      "sha256": "207e157487ed2974bd5aa0dac95af5ff387b9a721fd9ca3e0c47a37908e7586b",
       "title": "The War of the Worlds",
       "description": "H. G. Wells, 1898",
       "tags": [

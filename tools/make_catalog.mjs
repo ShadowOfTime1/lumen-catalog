@@ -4,6 +4,7 @@
 import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 const [folder, name, metaFile] = process.argv.slice(2);
 if (!folder || !name) { console.error('usage: make_catalog.mjs <folder> <name> [meta.json]'); process.exit(1); }
@@ -24,6 +25,7 @@ for (const file of fs.readdirSync(folder).sort()) {
   const full = path.join(folder, file);
   if (!fs.statSync(full).isFile()) continue;
   const cid = ipfs(['add', '-Q', full]);           // pins + returns CID
+  const sha256 = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex'); // for VirusTotal lookups
   const m = meta[file] || {};
   items.push({
     cid,
@@ -31,6 +33,7 @@ for (const file of fs.readdirSync(folder).sort()) {
     path: file,
     size: fs.statSync(full).size,
     type: TYPES[path.extname(file).toLowerCase()] || '',
+    sha256,
     title: m.title || file.replace(/\.[^.]+$/, '').replace(/_/g, ' '),
     description: m.description || '',
     tags: m.tags || [],

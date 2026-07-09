@@ -132,7 +132,7 @@
   <button class="btn dl" id="seldl">⇩ Download selected</button>
 </div>
 
-<script id="registry" type="application/json">{"catalogs":[{"cid":"Qme9cpx9v7mVaVwJv4rZ9MRYbQDxMrmpMgUy4y51RgASAz","name":"Audiobooks (Public Domain)","count":7,"size":37257148,"tags":["audiobook","classic","public-domain","strategy"]},{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmYm1L63N2pAFpP5bP7uNuBau5HbVRNwsaKEUEAASz1YTB","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmVswK2D6hsEsUc1RhG3447TmyZkcrkMgYaSvbvrHBo91L","name":"Public Domain Library","count":18,"size":7446762,"tags":["classic","satire","fiction","historical","adventure","fantasy"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
+<script id="registry" type="application/json">{"catalogs":[{"cid":"QmWfLrBFBTEzkCs3ezGEPD4LGWu2u6hTtgJw4wH2Pw8XD9","name":"Audiobooks (Public Domain)","count":7,"size":37257148,"tags":["audiobook","classic","public-domain","strategy"]},{"cid":"Qmeg9j2yYXVfzYE2eMqyLeDSvQTbg8n6i3YjWsGntddxB8","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmdHXXZwULzSQCJPE8WrRZMnMLokVyGftqbmGMX2frcemz","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"QmPL3yJ4CL4MK4dKBD1JyKKLhL2mBjvRSLKrbrHAQLfoTx","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmXR6Mj6xovhFyGuY1EFDqXUHbkEiFiAs4HDsAKTAA2Y6j","name":"Public Domain Library","count":18,"size":7446762,"tags":["classic","satire","fiction","historical","adventure","fantasy"]},{"cid":"QmQ28TVfrqsZji9cREPQqGRXnwpT6naXZF4Q72euNDv5iS","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
 <script>
 const GATEWAYS=['https://dweb.link/ipfs/','https://ipfs.io/ipfs/','https://cloudflare-ipfs.com/ipfs/'];
 const REG=JSON.parse(document.getElementById('registry').textContent).catalogs||[];
@@ -256,8 +256,10 @@ function typeIcon(f){
 }
 const RISKY_RE=/\.(exe|msi|msix|appx|dmg|pkg|deb|rpm|apk|bat|cmd|com|scr|ps1|vbs|jar|sh|run|bin|app|gadget|hta|jse|wsf)$/i;
 const isRisky=f=>RISKY_RE.test(f.name||'');
+const isSha=s=>/^[a-f0-9]{64}$/i.test(s||'');
 function fileRow(f,withCat){
   const on=sel.has(f.cid), cid=esc(f.cid), pv=previewKind(f), risky=isRisky(f);
+  const vt=isSha(f.sha256)?`<a class="btn ghost" href="https://www.virustotal.com/gui/file/${f.sha256.toLowerCase()}" target="_blank" rel="noopener" title="Check this file’s reputation on VirusTotal">🛡</a>`:'';
   return `<div class="prow${on?' sel':''}${risky?' risky':''}" data-cid="${cid}" data-name="${esc(f.name)}" data-size="${esc(f.size)}"${pv?` data-pv="${pv}"`:''}${risky?' data-risky="1"':''}>
     <input type="checkbox" class="ck"${on?' checked':''}>
     <div><div class="t">${typeIcon(f)}${esc(f.title||f.name)}${risky?'<span class="warnb" title="Executable — verify before running">⚠ program</span>':''}</div>
@@ -265,7 +267,7 @@ function fileRow(f,withCat){
       <div class="cid" title="${cid}">${cid}</div><div class="pv"></div></div>
     <div class="act"><span class="sz">${fmt(f.size)}</span>
       ${pv?`<button class="btn ghost pvbtn" title="Preview in browser">${pv==='audio'?'▶':'◱'}</button>`:''}
-      <button class="btn ghost copy" data-cid="${cid}" title="Copy CID">⧉</button>
+      <button class="btn ghost copy" data-cid="${cid}" title="Copy CID">⧉</button>${vt}
       <a class="btn" href="ipfs://${encodeURIComponent(f.cid)}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
       <a class="btn dl" href="${esc(dlUrl(f.cid,f.name))}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
 }

@@ -146,6 +146,7 @@ const fmtSize=b=>{b=+b;return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const asArray=v=>Array.isArray(v)?v:(v==null||v===''?[]:[String(v)]);
 const cellVal=(i,c)=>c.type==='tags'?asArray(i[c.key]).join(', '):(i[c.key]==null?'':String(i[c.key]));
+async function sha256hex(abuf){ try{ const h=await crypto.subtle.digest('SHA-256',abuf); return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''); }catch{ return ''; } }
 
 function totalSize(){return items.reduce((s,i)=>s+ (+i.size||0),0)}
 function renderHead(){
@@ -192,13 +193,15 @@ async function addFiles(fileList){
   const existing=new Map(items.map(i=>[i.path,i]));
   for(const f of files){
     try{
-      const buf=new Uint8Array(await f.arrayBuffer());
+      const abuf=await f.arrayBuffer();
+      const buf=new Uint8Array(abuf);
       const cid=await window.ipfsHash(buf);
+      const sha256=await sha256hex(abuf);   // for VirusTotal lookups in index.lmn
       const path=f.webkitRelativePath||f.name;
       fileHandles.set(path,f);   // keep the handle so we can push files to Lumen Drive later
       const prev=existing.get(path);
-      if(prev){Object.assign(prev,{cid,size:f.size,type:f.type||''});}
-      else{const rec={cid,name:f.name,path,size:f.size,type:f.type||''};
+      if(prev){Object.assign(prev,{cid,size:f.size,type:f.type||'',sha256});}
+      else{const rec={cid,name:f.name,path,size:f.size,type:f.type||'',sha256};
         cols.forEach(c=>rec[c.key]=c.type==='tags'?[]:'');
         items.push(rec);existing.set(path,rec);}
     }catch(err){console.warn('hash fail',f.name,err);}
@@ -218,7 +221,7 @@ function buildCatalog(){
   return {lumen_catalog:'1',name:$('cname').value||'Untitled catalog',created:new Date().toISOString(),
     count:items.length,total_size:totalSize(),
     columns:cols.map(c=>({key:c.key,label:c.label,type:c.type})),
-    items:items.map(i=>{const o={cid:i.cid,name:i.name,path:i.path,size:i.size,type:i.type};
+    items:items.map(i=>{const o={cid:i.cid,name:i.name,path:i.path,size:i.size,type:i.type,sha256:i.sha256||''};
       cols.forEach(c=>o[c.key]=i[c.key]!==undefined?i[c.key]:(c.type==='tags'?[]:''));return o;})};
 }
 function catalogName(){return ($('cname').value.replace(/[^\w.-]+/g,'_')||'catalog')+'.lumencatalog.json';}
@@ -298,7 +301,7 @@ $('imp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)ret
     }
     const byPath=new Map(items.map(i=>[i.path,i]));
     (c.items||[]).forEach(x=>{if(!x||x.cid==null)return;const p=String(x.path||x.name||'');const prev=byPath.get(p);
-      const rec={cid:String(x.cid),name:String(x.name||''),path:p,size:+x.size||0,type:String(x.type||'')};
+      const rec={cid:String(x.cid),name:String(x.name||''),path:p,size:+x.size||0,type:String(x.type||''),sha256:/^[a-f0-9]{64}$/i.test(x.sha256||'')?String(x.sha256):''};
       cols.forEach(col=>rec[col.key]=col.type==='tags'?asArray(x[col.key]):(x[col.key]!=null?String(x[col.key]):''));
       if(prev)Object.assign(prev,rec);else{items.push(rec);byPath.set(p,rec);}});
     render();

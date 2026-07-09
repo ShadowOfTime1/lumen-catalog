@@ -1,7 +1,7 @@
 {
   "lumen_catalog": "1",
   "name": "Music (Creative Commons)",
-  "created": "2026-07-09T07:45:01.940Z",
+  "created": "2026-07-09T17:38:44.375Z",
   "count": 10,
   "total_size": 74880324,
   "items": [
@@ -11,6 +11,7 @@
       "path": "Kevin_MacLeod_-_Also_Sprach_Zarathustra.mp3",
       "size": 3445220,
       "type": "audio/mpeg",
+      "sha256": "b91fce45494f2b8d99ca935e8cb3a3c406feb3587819ae7818b019b636fc8466",
       "title": "Also Sprach Zarathustra",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -25,6 +26,7 @@
       "path": "Kevin_MacLeod_-_Amazing_Grace_2011.mp3",
       "size": 7572292,
       "type": "audio/mpeg",
+      "sha256": "ccb234b60d6c2df0a12ba12e7ac532bd60fdb1f26faa4dd483ec1a7a81150d45",
       "title": "Amazing Grace 2011",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -39,6 +41,7 @@
       "path": "Kevin_MacLeod_-_Brandenburg_Concerto_No4-1_BWV1049.mp3",
       "size": 14156353,
       "type": "audio/mpeg",
+      "sha256": "c2fd7f8b13fb31c5ac533e44f305b5d92c7d873b60322810749ff5c4ae98632f",
       "title": "Brandenburg Concerto No4 1 BWV1049",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -53,6 +56,7 @@
       "path": "Kevin_MacLeod_-_Canon_in_D_Major.mp3",
       "size": 11851012,
       "type": "audio/mpeg",
+      "sha256": "b2171bae6979bcac2c8ccdf048f0bea8e0f3f3abbed04378eb6008c667881356",
       "title": "Canon in D Major",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -67,6 +71,7 @@
       "path": "Kevin_MacLeod_-_Dance_of_the_Sugar_Plum_Fairy.mp3",
       "size": 4800178,
       "type": "audio/mpeg",
+      "sha256": "392e57987032e4ee7a017cd8397de653227f0622179a11d07628fedcb6e989f6",
       "title": "Dance of the Sugar Plum Fairy",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -81,6 +86,7 @@
       "path": "Kevin_MacLeod_-_Danse_Macabre.mp3",
       "size": 16341156,
       "type": "audio/mpeg",
+      "sha256": "8fde767ce072d7418fd817c249d0bc14cbe079ae88608f2fdb95a6796641f779",
       "title": "Danse Macabre",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -95,6 +101,7 @@
       "path": "Kevin_MacLeod_-_Danse_Macabre_-_Finale.mp3",
       "size": 955042,
       "type": "audio/mpeg",
+      "sha256": "593f77317ea96234c4ac417d4168c2bc0a6b4fd872b5c1769515502415fa02fe",
       "title": "Danse Macabre   Finale",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -109,6 +116,7 @@
       "path": "Kevin_MacLeod_-_Funeral_March_for_Brass.mp3",
       "size": 5237990,
       "type": "audio/mpeg",
+      "sha256": "51747458398af4fef7b68d7161fe2aed1d78bb6f6c5a3b20b352002fc3bac40d",
       "title": "Funeral March for Brass",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -123,6 +131,7 @@
       "path": "Kevin_MacLeod_-_Ghost_Dance.mp3",
       "size": 3033425,
       "type": "audio/mpeg",
+      "sha256": "d118fd5c447a33eed4a9e3d9f290174e4e589b1b927bd8b3363736e895b49588",
       "title": "Ghost Dance",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [
@@ -137,6 +146,7 @@
       "path": "Kevin_MacLeod_-_Gymnopedie_No_1.mp3",
       "size": 7487656,
       "type": "audio/mpeg",
+      "sha256": "7a9e0cb097a4b7efc5876b87a4fc5eeb360ff4ac760bc3f413ec895c13a71d94",
       "title": "Gymnopedie No 1",
       "description": "Kevin MacLeod · CC-BY 3.0 · incompetech.com",
       "tags": [

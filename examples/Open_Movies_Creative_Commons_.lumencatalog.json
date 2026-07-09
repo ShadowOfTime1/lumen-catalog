@@ -1,7 +1,7 @@
 {
   "lumen_catalog": "1",
   "name": "Open Movies (Creative Commons)",
-  "created": "2026-07-08T18:03:59.220Z",
+  "created": "2026-07-09T17:38:43.670Z",
   "count": 2,
   "total_size": 72265231,
   "items": [
@@ -11,6 +11,7 @@
       "path": "BigBuckBunny.mp4",
       "size": 64657027,
       "type": "video/mp4",
+      "sha256": "f78f39603e6774907f2faafabf26a667f4a6fc31769ec304a8a8f7c62d280508",
       "title": "Big Buck Bunny",
       "description": "Blender Foundation, 2008 — CC-BY 3.0",
       "tags": [
@@ -26,6 +27,7 @@
       "path": "Sintel-trailer.mp4",
       "size": 7608204,
       "type": "video/mp4",
+      "sha256": "cb0fe73fc0a7d543459996c0cdab730997e6eac1013d3ede18796f777cb7f273",
       "title": "Sintel (trailer)",
       "description": "Blender Foundation, 2010 — CC-BY 3.0",
       "tags": [
