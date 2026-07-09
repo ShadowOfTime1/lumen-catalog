@@ -25,6 +25,10 @@
   .addcid .btn{white-space:nowrap}
   .addnote{color:var(--muted);font-size:12px;min-height:16px;margin:2px 0 6px 2px}
   .btn.retry{border-color:var(--lime);color:var(--lime)}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 6px}
+  .chip{font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px}
+  .chip:hover{border-color:var(--lime)}
+  .chip.on{background:var(--lime);color:#04120a;border-color:var(--lime)}
   h2{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin:22px 0 12px 2px;display:flex;gap:8px;align-items:center}
   .back{cursor:pointer;color:var(--lime);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
   .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:12px}
@@ -103,6 +107,14 @@
   </div>
   <div class="addnote" id="addnote"></div>
 
+  <div class="chips" id="chips">
+    <button class="chip on" data-type="all">All</button>
+    <button class="chip" data-type="audio">Audio</button>
+    <button class="chip" data-type="video">Video</button>
+    <button class="chip" data-type="book">Books</button>
+    <button class="chip" data-type="software">Software</button>
+  </div>
+
   <div id="view"></div>
 
   <footer>Lumen Index · served on-chain from IPFS · lumen://index.lmn · by <a href="https://shadowoftime.dev">ShadowOfTime</a> validator</footer>
@@ -115,7 +127,7 @@
   <button class="btn dl" id="seldl">⇩ Download selected</button>
 </div>
 
-<script id="registry" type="application/json">{"catalogs":[{"cid":"Qme9cpx9v7mVaVwJv4rZ9MRYbQDxMrmpMgUy4y51RgASAz","name":"Audiobooks (Public Domain)","count":7,"size":37257148,"tags":["audiobook","classic","public-domain","strategy"]},{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmYm1L63N2pAFpP5bP7uNuBau5HbVRNwsaKEUEAASz1YTB","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmRtczenYxMm5cLtqXGJPbCvGwCUuAeMV8AeQrNKMyDV2R","name":"Public Domain Library","count":8,"size":3300261,"tags":["fiction","classic","historical","fantasy","horror","adventure"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
+<script id="registry" type="application/json">{"catalogs":[{"cid":"Qme9cpx9v7mVaVwJv4rZ9MRYbQDxMrmpMgUy4y51RgASAz","name":"Audiobooks (Public Domain)","count":7,"size":37257148,"tags":["audiobook","classic","public-domain","strategy"]},{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmYm1L63N2pAFpP5bP7uNuBau5HbVRNwsaKEUEAASz1YTB","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmVswK2D6hsEsUc1RhG3447TmyZkcrkMgYaSvbvrHBo91L","name":"Public Domain Library","count":18,"size":7446762,"tags":["classic","satire","fiction","historical","adventure","fantasy"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
 <script>
 const GATEWAYS=['https://dweb.link/ipfs/','https://ipfs.io/ipfs/','https://cloudflare-ipfs.com/ipfs/'];
 const REG=JSON.parse(document.getElementById('registry').textContent).catalogs||[];
@@ -219,6 +231,14 @@ function previewKind(f){const t=(f.type||''),n=(f.name||'');
   if(t.startsWith('audio/')||AUDIO_RE.test(n))return 'audio';
   if((t.startsWith('image/')&&t!=='image/svg+xml')||IMAGE_RE.test(n))return 'image';
   return null;}
+let activeType='all';
+function fileType(f){const t=(f.type||''),n=(f.name||'');
+  if(t.startsWith('audio/')||AUDIO_RE.test(n))return 'audio';
+  if(t.startsWith('video/')||/\.(mp4|mkv|webm|avi|mov)$/i.test(n))return 'video';
+  if(/\.(epub|pdf|txt|mobi|djvu)$/i.test(n))return 'book';
+  if(/\.(iso|zip|gz|tar|7z|rar|img|deb|dmg|exe)$/i.test(n))return 'software';
+  if((t.startsWith('image/'))||/\.(png|jpe?g|gif|webp|avif|svg)$/i.test(n))return 'image';
+  return 'other';}
 function typeIcon(f){
   const t=(f.type||''),n=(f.name||''), A='stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"';
   const s=p=>`<svg class="ti" width="15" height="15" viewBox="0 0 24 24" ${A}>${p}</svg>`;
@@ -254,13 +274,15 @@ function catCard(c){
 function render(){
   const q=$('search').value.trim().toLowerCase();
   const v=$('view');
-  if(q){ // global search across catalogs + files
-    const cs=REG.filter(c=>matchC(c,q));
-    const fs=allFiles().filter(f=>matchF(f,q));
+  if(q || activeType!=='all'){ // filtered view: by search text and/or content type
+    let fs=allFiles();
+    if(activeType!=='all') fs=fs.filter(f=>fileType(f)===activeType);
+    if(q) fs=fs.filter(f=>matchF(f,q));
+    const cs=q?REG.filter(c=>matchC(c,q)):[];
     let html='';
     if(cs.length) html+=`<h2>Catalogs (${cs.length})</h2><div class="cats">${cs.map(catCard).join('')}</div>`;
     html+=`<h2>Files (${fs.length})</h2>`;
-    html+= fs.length?`<div class="panel">${fs.map(f=>fileRow(f,true)).join('')}</div>`:`<div class="empty">Nothing matches “${esc(q)}”.</div>`;
+    html+= fs.length?`<div class="panel">${fs.map(f=>fileRow(f,true)).join('')}</div>`:`<div class="empty">${q?'Nothing matches “'+esc(q)+'”.':'No files of this type yet.'}</div>`;
     v.innerHTML=html; return;
   }
   if(open&&!cat[open]){ // opened but not reachable
@@ -326,6 +348,9 @@ $('view').addEventListener('click',async e=>{
   if(e.target.id==='dall'){ bulk(cat[open].items); return; }
 });
 $('search').addEventListener('input',()=>{render();refreshSelbar();});
+$('chips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b)return;
+  activeType=b.dataset.type; document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));
+  if(activeType!=='all')open=null; render(); refreshSelbar(); });
 function bulk(items){ items.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=dlUrl(f.cid,f.name);a.rel='noopener';document.body.appendChild(a);a.click();a.remove();},i*300)); }
 $('seldl').addEventListener('click',()=>{const items=[...sel].map(([cid,v])=>({cid,name:v.name}));bulk(items);});
 $('selclear').addEventListener('click',()=>{sel.clear();refreshSelbar();});
