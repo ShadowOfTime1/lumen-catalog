@@ -23,6 +23,8 @@
   .addcid input{flex:1;background:#0d1712;border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:9px 12px;font:inherit;font-size:13px}
   .addcid input:focus{outline:none;border-color:var(--lime)}
   .addcid .btn{white-space:nowrap}
+  .addnote{color:var(--muted);font-size:12px;min-height:16px;margin:2px 0 6px 2px}
+  .btn.retry{border-color:var(--lime);color:var(--lime)}
   h2{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin:22px 0 12px 2px;display:flex;gap:8px;align-items:center}
   .back{cursor:pointer;color:var(--lime);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
   .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:12px}
@@ -97,6 +99,7 @@
     <input id="addin" type="text" placeholder="Open any catalog by its CID…" autocomplete="off" spellcheck="false">
     <button class="btn" id="addbtn">＋ Add catalog</button>
   </div>
+  <div class="addnote" id="addnote"></div>
 
   <div id="view"></div>
 
@@ -110,7 +113,7 @@
   <button class="btn dl" id="seldl">⇩ Download selected</button>
 </div>
 
-<script id="registry" type="application/json">{"catalogs":[{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmYm1L63N2pAFpP5bP7uNuBau5HbVRNwsaKEUEAASz1YTB","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmRtczenYxMm5cLtqXGJPbCvGwCUuAeMV8AeQrNKMyDV2R","name":"Public Domain Library","count":8,"size":3300261,"tags":["fiction","classic","historical","fantasy","horror","adventure"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
+<script id="registry" type="application/json">{"catalogs":[{"cid":"Qme9cpx9v7mVaVwJv4rZ9MRYbQDxMrmpMgUy4y51RgASAz","name":"Audiobooks (Public Domain)","count":7,"size":37257148,"tags":["audiobook","classic","public-domain","strategy"]},{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmYm1L63N2pAFpP5bP7uNuBau5HbVRNwsaKEUEAASz1YTB","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmRtczenYxMm5cLtqXGJPbCvGwCUuAeMV8AeQrNKMyDV2R","name":"Public Domain Library","count":8,"size":3300261,"tags":["fiction","classic","historical","fantasy","horror","adventure"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
 <script>
 const GATEWAYS=['https://dweb.link/ipfs/','https://ipfs.io/ipfs/','https://cloudflare-ipfs.com/ipfs/'];
 const REG=JSON.parse(document.getElementById('registry').textContent).catalogs||[];
@@ -145,9 +148,11 @@ async function nativeGet(cid){
 async function fetchCID(cid){
   const nat=await nativeGet(cid); if(nat) return nat;
   const c=encodeURIComponent(cid);
-  try{const r=await fetch('ipfs://'+c);if(r.ok)return await r.json();}catch{}
-  for(const g of GATEWAYS){try{const r=await fetch(g+c,{signal:AbortSignal.timeout(12000)});if(r.ok)return await r.json();}catch{}}
-  throw new Error('unavailable');
+  // race ipfs:// and every gateway in parallel — first valid response wins, one slow/dead gateway can't stall us
+  const tries=['ipfs://'+c,...GATEWAYS.map(g=>g+c)].map(u=>
+    fetch(u,{signal:AbortSignal.timeout(10000)}).then(r=>r.ok?r.json():Promise.reject(new Error('bad'))));
+  try{ const k=await Promise.any(tries); if(!validCatalog(k)) throw new Error('not_catalog'); return k; }
+  catch(e){ throw new Error(e&&e.message==='not_catalog'?'not_catalog':'unavailable'); }
 }
 const dlUrl=(cid,name)=>GATEWAYS[0]+encodeURIComponent(cid)+'?filename='+encodeURIComponent(name)+'&download=true';
 const validCatalog=k=>k&&Array.isArray(k.items);
@@ -156,13 +161,21 @@ function setStat(){
   const up=REG.filter(c=>c.up).length, files=REG.filter(c=>cat[c.cid]).reduce((s,c)=>s+cat[c.cid].items.length,0);
   $('stat').textContent=`${up}/${REG.length} catalogs online · ${files} files · ${fmt(REG.reduce((s,c)=>s+(c.size||0),0))} total`;
 }
-// preload every catalog so global search works instantly
+async function loadCatalog(c){
+  if(cat[c.cid]){c.up=true;return true;}
+  try{ const k=await fetchCID(c.cid); cat[c.cid]=k; c.up=true; return true; }
+  catch{ c.up=false; return false; }
+}
+async function retryCatalog(cid){
+  const c=REG.find(x=>x.cid===cid); if(!c)return; delete cat[cid]; c.up=undefined; render();
+  await loadCatalog(c); setStat(); if(open===cid&&cat[cid])openCat(cid); else render();
+}
+// preload every catalog, then quietly retry the ones that failed once
 async function preload(){
-  await Promise.all(REG.map(async c=>{
-    if(cat[c.cid]){c.up=true;return;}
-    try{ const k=await fetchCID(c.cid); if(!validCatalog(k))throw 0; cat[c.cid]=k; c.up=true; }catch{ c.up=false; }
-  }));
+  await Promise.all(REG.map(loadCatalog));
   setStat(); render();
+  setTimeout(async()=>{ const failed=REG.filter(c=>!cat[c.cid]); if(!failed.length)return;
+    await Promise.all(failed.map(loadCatalog)); setStat(); render(); }, 4500);
 }
 
 // user-added catalogs (by CID), kept in this browser
@@ -179,15 +192,15 @@ async function addByCid(raw){
   const cid=parseCid(raw);
   if(!cid) return;
   if(REG.find(c=>c.cid===cid)){ $('addin').value=''; openCat(cid); return; }
-  const btn=$('addbtn'); btn.textContent='…'; btn.disabled=true;
+  const btn=$('addbtn'); btn.textContent='…'; btn.disabled=true; $('addnote').textContent='';
   try{
     const k=await fetchCID(cid);
-    if(!k||!Array.isArray(k.items)) throw 0;
     const entry={cid,name:k.name||'Catalog',count:k.items.length,size:k.total_size||0,
       tags:[...new Set(k.items.flatMap(i=>i.tags||[]))].slice(0,6),up:true,custom:true};
     REG.push(entry); cat[cid]=k; saveCustom();
     $('addin').value=''; setStat(); render(); openCat(cid);
-  }catch{ $('addin').style.borderColor='#ff7a7a'; setTimeout(()=>$('addin').style.borderColor='',1200); }
+  }catch(e){ $('addin').style.borderColor='#ff7a7a'; setTimeout(()=>$('addin').style.borderColor='',1400);
+    $('addnote').textContent = e&&e.message==='not_catalog' ? 'That CID isn’t a Lumen catalog.' : 'Catalog not reachable — check the CID or try again.'; }
   btn.textContent='＋ Add catalog'; btn.disabled=false;
 }
 function openCat(cid){ open=cid; $('search').value=''; render(); refreshSelbar(); window.scrollTo({top:0,behavior:'smooth'}); }
@@ -237,8 +250,10 @@ function render(){
   }
   if(open&&!cat[open]){ // opened but not reachable
     const c=REG.find(x=>x.cid===open)||{};
+    const checking=c.up===undefined;
     v.innerHTML=`<h2><span class="back" id="back">← All catalogs</span></h2>
-      <div class="panel"><div class="empty">${esc(c.name||'Catalog')} isn't reachable right now — no one is hosting it. Try again shortly.</div></div>`;
+      <div class="panel"><div class="empty">${checking?'Fetching '+esc(c.name||'catalog')+'…':esc(c.name||'Catalog')+" isn't reachable right now — nobody is hosting it at the moment."}
+        ${checking?'':`<div style="margin-top:12px"><button class="btn retry" data-retry="${esc(open)}">↻ Retry</button></div>`}</div></div>`;
     return;
   }
   if(open&&cat[open]){ // catalog detail
@@ -280,6 +295,8 @@ function togglePreview(row,btn){
 }
 
 $('view').addEventListener('click',async e=>{
+  const rt=e.target.closest('[data-retry]');
+  if(rt){ retryCatalog(rt.dataset.retry); return; }
   const rm=e.target.closest('.rmcat');
   if(rm){ const c=rm.dataset.rm; const i=REG.findIndex(x=>x.cid===c); if(i>=0){REG.splice(i,1);delete cat[c];if(open===c)open=null;saveCustom();setStat();render();refreshSelbar();} return; }
   const card=e.target.closest('.cat');
