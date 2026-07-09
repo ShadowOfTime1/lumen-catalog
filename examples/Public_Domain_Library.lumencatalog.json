@@ -1,10 +1,23 @@
 {
   "lumen_catalog": "1",
   "name": "Public Domain Library",
-  "created": "2026-07-08T17:26:45.797Z",
-  "count": 8,
-  "total_size": 3300261,
+  "created": "2026-07-09T14:05:01.058Z",
+  "count": 18,
+  "total_size": 7446762,
   "items": [
+    {
+      "cid": "QmZkrxHg8cRHDWmEicfJmnMEyZpg1BQmX73GHRg88ix9Uv",
+      "name": "A_Modest_Proposal.epub",
+      "path": "A_Modest_Proposal.epub",
+      "size": 107318,
+      "type": "application/epub+zip",
+      "title": "A Modest Proposal",
+      "description": "Jonathan Swift, 1729",
+      "tags": [
+        "classic",
+        "satire"
+      ]
+    },
     {
       "cid": "QmNNjMmhWpK83YPj5DSZJcZNmsBedxFyNKXDnRcHfGpt9o",
       "name": "A_Tale_of_Two_Cities.epub",
@@ -20,17 +33,45 @@
       ]
     },
     {
+      "cid": "QmbzRv4YZKzT8JhcxHorZQVrrbCMQVpEbjKD5V6eihLm6p",
+      "name": "Adventures_of_Huckleberry_Finn.epub",
+      "path": "Adventures_of_Huckleberry_Finn.epub",
+      "size": 347404,
+      "type": "application/epub+zip",
+      "title": "Adventures of Huckleberry Finn",
+      "description": "Mark Twain, 1884",
+      "tags": [
+        "fiction",
+        "classic",
+        "adventure"
+      ]
+    },
+    {
       "cid": "QmXQSdg938fbYq4Rm9ruAWqi58aDeH3X4bQkkz3zeZjHQY",
       "name": "Alice_s_Adventures_in_Wonderland.epub",
       "path": "Alice_s_Adventures_in_Wonderland.epub",
       "size": 136726,
       "type": "application/epub+zip",
-      "title": "Alice's Adventures in Wonderland",
+      "title": "Alice’s Adventures in Wonderland",
       "description": "Lewis Carroll, 1865",
       "tags": [
         "fiction",
         "classic",
         "fantasy"
+      ]
+    },
+    {
+      "cid": "QmUoYjJ3BJaq2nQCt6pa7HmRope96vwG66vrnXPEKsgr18",
+      "name": "Crime_and_Punishment.epub",
+      "path": "Crime_and_Punishment.epub",
+      "size": 651249,
+      "type": "application/epub+zip",
+      "title": "Crime and Punishment",
+      "description": "Fyodor Dostoevsky, 1866",
+      "tags": [
+        "fiction",
+        "classic",
+        "philosophy"
       ]
     },
     {
@@ -59,6 +100,59 @@
         "fiction",
         "classic",
         "horror"
+      ]
+    },
+    {
+      "cid": "QmQsZvENu7sQVHAtLFtvwFy3KzJ8iZN19mQS7FkGj4NuNo",
+      "name": "Great_Expectations.epub",
+      "path": "Great_Expectations.epub",
+      "size": 554524,
+      "type": "application/epub+zip",
+      "title": "Great Expectations",
+      "description": "Charles Dickens, 1861",
+      "tags": [
+        "fiction",
+        "classic"
+      ]
+    },
+    {
+      "cid": "QmaFWvGmi9NuV5jw28ge7spHXFsWTFswSPDbMHPoMszNdD",
+      "name": "Jane_Eyre.epub",
+      "path": "Jane_Eyre.epub",
+      "size": 607643,
+      "type": "application/epub+zip",
+      "title": "Jane Eyre",
+      "description": "Charlotte Brontë, 1847",
+      "tags": [
+        "fiction",
+        "classic",
+        "romance"
+      ]
+    },
+    {
+      "cid": "QmTS5RWLQEqtnC6KsGBkMRwVUdb6pFd3r4KMAPzRLi7FWD",
+      "name": "Little_Women.epub",
+      "path": "Little_Women.epub",
+      "size": 550672,
+      "type": "application/epub+zip",
+      "title": "Little Women",
+      "description": "Louisa May Alcott, 1868",
+      "tags": [
+        "fiction",
+        "classic"
+      ]
+    },
+    {
+      "cid": "Qmada7CUfUwudssE7Gx8UmzZGbLTjFgt8FRuh3dKGy1P1b",
+      "name": "Metamorphosis.epub",
+      "path": "Metamorphosis.epub",
+      "size": 158573,
+      "type": "application/epub+zip",
+      "title": "The Metamorphosis",
+      "description": "Franz Kafka, 1915",
+      "tags": [
+        "fiction",
+        "classic"
       ]
     },
     {
@@ -115,6 +209,47 @@
         "fiction",
         "classic",
         "adventure"
+      ]
+    },
+    {
+      "cid": "QmRwHmDYJGvQ7J6MeW7Bxn5GBJftCo5FjphXWA2junVWwZ",
+      "name": "The_Picture_of_Dorian_Gray.epub",
+      "path": "The_Picture_of_Dorian_Gray.epub",
+      "size": 460207,
+      "type": "application/epub+zip",
+      "title": "The Picture of Dorian Gray",
+      "description": "Oscar Wilde, 1890",
+      "tags": [
+        "fiction",
+        "classic"
+      ]
+    },
+    {
+      "cid": "QmPAor81sCRoBVMjG7XiC5p1ME8NCmK6tXmZgWyPkg2aGe",
+      "name": "Treasure_Island.epub",
+      "path": "Treasure_Island.epub",
+      "size": 273950,
+      "type": "application/epub+zip",
+      "title": "Treasure Island",
+      "description": "Robert Louis Stevenson, 1883",
+      "tags": [
+        "fiction",
+        "classic",
+        "adventure"
+      ]
+    },
+    {
+      "cid": "QmRck5MUKeSgSAPhwEWX9zwD7VvNHCDvQY7vUWN47g9bKx",
+      "name": "Wuthering_Heights.epub",
+      "path": "Wuthering_Heights.epub",
+      "size": 434961,
+      "type": "application/epub+zip",
+      "title": "Wuthering Heights",
+      "description": "Emily Brontë, 1847",
+      "tags": [
+        "fiction",
+        "classic",
+        "romance"
       ]
     }
   ]
