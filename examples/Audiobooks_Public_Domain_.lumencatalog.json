@@ -1,0 +1,114 @@
+{
+  "lumen_catalog": "1",
+  "name": "Audiobooks (Public Domain)",
+  "created": "2026-07-09T12:06:37.581Z",
+  "count": 7,
+  "total_size": 37257148,
+  "items": [
+    {
+      "cid": "QmSbCnyLAKT29LJwo2vTwgu9wgFr82c4t8mC5EezqowPvX",
+      "name": "art_of_war_01-02_sun_tzu_64kb.mp3",
+      "path": "art_of_war_01-02_sun_tzu_64kb.mp3",
+      "size": 3911680,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 01–02",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    },
+    {
+      "cid": "QmeBmxAamRvmxREu4XoyKmx92AisD5oKT2WADqyMABJ8Ea",
+      "name": "art_of_war_03-04_sun_tzu_64kb.mp3",
+      "path": "art_of_war_03-04_sun_tzu_64kb.mp3",
+      "size": 3723859,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 03–04",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    },
+    {
+      "cid": "QmRt5SQ2mZTLroUTZsyUbpecSQ3t6xxMK3mVi5Vfiy54HH",
+      "name": "art_of_war_05-06_sun_tzu_64kb.mp3",
+      "path": "art_of_war_05-06_sun_tzu_64kb.mp3",
+      "size": 5094335,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 05–06",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    },
+    {
+      "cid": "QmVUDStFJxiUhqs1yADh3ynzAQ1gXvFnzn6BGhoQ48FWHi",
+      "name": "art_of_war_07-08_sun_tzu_64kb.mp3",
+      "path": "art_of_war_07-08_sun_tzu_64kb.mp3",
+      "size": 4246508,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 07–08",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    },
+    {
+      "cid": "QmYnMF5Q78ZxmNduEWjQ5G3P1uEUA2eGgE639RytCnHqKJ",
+      "name": "art_of_war_09-10_sun_tzu_64kb.mp3",
+      "path": "art_of_war_09-10_sun_tzu_64kb.mp3",
+      "size": 7059580,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 09–10",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    },
+    {
+      "cid": "QmPywhedSNTKkWguzneFy4WYhhfhCKJqHHHD3m5Tw4Der3",
+      "name": "art_of_war_11_sun_tzu_64kb.mp3",
+      "path": "art_of_war_11_sun_tzu_64kb.mp3",
+      "size": 5717494,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 11",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    },
+    {
+      "cid": "QmWRtcwBnZru3scNRwvamqDF7cKfXYu5FRmMpRnVqZ5r59",
+      "name": "art_of_war_12-13_sun_tzu.mp3",
+      "path": "art_of_war_12-13_sun_tzu.mp3",
+      "size": 7503692,
+      "type": "audio/mpeg",
+      "title": "The Art of War — Chapters 12–13",
+      "description": "Sun Tzu · read by LibriVox volunteers · public domain",
+      "tags": [
+        "audiobook",
+        "classic",
+        "public-domain",
+        "strategy"
+      ]
+    }
+  ]
+}
