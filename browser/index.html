@@ -29,6 +29,10 @@
   .chip{font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 13px}
   .chip:hover{border-color:var(--lime)}
   .chip.on{background:var(--lime);color:#04120a;border-color:var(--lime)}
+  .warnb{font-size:10px;font-weight:700;color:#f0c14b;border:1px solid rgba(240,193,75,.4);border-radius:5px;padding:1px 6px;margin-left:2px;vertical-align:middle}
+  .prow.risky{background:linear-gradient(90deg,rgba(240,193,75,.06),transparent)}
+  .warnbar{background:rgba(240,193,75,.08);border:1px solid rgba(240,193,75,.35);border-radius:11px;padding:11px 14px;margin-bottom:12px;color:#f0c14b;font-size:12.5px}
+  .warnbar b{color:var(--ink)}
   h2{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin:22px 0 12px 2px;display:flex;gap:8px;align-items:center}
   .back{cursor:pointer;color:var(--lime);font-size:12px;font-weight:700;letter-spacing:0;text-transform:none}
   .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:12px}
@@ -250,11 +254,13 @@ function typeIcon(f){
   if(/\.(iso|zip|gz|tar|7z|rar|img|deb|dmg|exe)$/i.test(n)) return s('<path d="m21 8-9 4-9-4 9-4 9 4z"/><path d="M3 8v8l9 4 9-4V8"/>');
   return s('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>');
 }
+const RISKY_RE=/\.(exe|msi|msix|appx|dmg|pkg|deb|rpm|apk|bat|cmd|com|scr|ps1|vbs|jar|sh|run|bin|app|gadget|hta|jse|wsf)$/i;
+const isRisky=f=>RISKY_RE.test(f.name||'');
 function fileRow(f,withCat){
-  const on=sel.has(f.cid), cid=esc(f.cid), pv=previewKind(f);
-  return `<div class="prow${on?' sel':''}" data-cid="${cid}" data-name="${esc(f.name)}" data-size="${esc(f.size)}"${pv?` data-pv="${pv}"`:''}>
+  const on=sel.has(f.cid), cid=esc(f.cid), pv=previewKind(f), risky=isRisky(f);
+  return `<div class="prow${on?' sel':''}${risky?' risky':''}" data-cid="${cid}" data-name="${esc(f.name)}" data-size="${esc(f.size)}"${pv?` data-pv="${pv}"`:''}${risky?' data-risky="1"':''}>
     <input type="checkbox" class="ck"${on?' checked':''}>
-    <div><div class="t">${typeIcon(f)}${esc(f.title||f.name)}</div>
+    <div><div class="t">${typeIcon(f)}${esc(f.title||f.name)}${risky?'<span class="warnb" title="Executable — verify before running">⚠ program</span>':''}</div>
       <div class="d">${withCat&&f._cat?`<span class="badge">${esc(f._cat)}</span>`:''}${esc(f.description||'')}</div>
       <div class="cid" title="${cid}">${cid}</div><div class="pv"></div></div>
     <div class="act"><span class="sz">${fmt(f.size)}</span>
@@ -302,7 +308,8 @@ function render(){
   }
   if(open&&cat[open]){ // catalog detail
     const c=REG.find(x=>x.cid===open), k=cat[open];
-    v.innerHTML=`<h2><span class="back" id="back">← All catalogs</span></h2>
+    const warn = (c&&c.custom) ? `<div class="warnbar"><b>Community catalog — not verified.</b> Anyone can publish a catalog; these files aren’t vetted by Lumen or ShadowOfTime. Content is delivered exactly as hashed (its CID guarantees it wasn’t altered), but that says nothing about whether a file is safe. Don’t run programs from a source you don’t trust; scan or sandbox anything you open.</div>` : '';
+    v.innerHTML=`<h2><span class="back" id="back">← All catalogs</span></h2>${warn}
       <div class="panel"><div class="dhead">
         <div><div class="nm">${esc(k.name)}</div><div class="meta">${k.items.length} files · ${fmt(k.total_size)}</div></div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -339,6 +346,12 @@ function togglePreview(row,btn){
 }
 
 $('view').addEventListener('click',async e=>{
+  const dlink=e.target.closest('.act a[href]');
+  if(dlink&&dlink.closest('.prow[data-risky]')){
+    const nm=(dlink.closest('.prow').dataset.name)||'this file';
+    if(!confirm('⚠ '+nm+'\n\nThis is a program or installer. Malware often disguises itself as software. Only open it if you trust who published this catalog.\n\nDownload anyway?')) e.preventDefault();
+    return;
+  }
   const rt=e.target.closest('[data-retry]');
   if(rt){ retryCatalog(rt.dataset.retry); return; }
   const rm=e.target.closest('.rmcat');
@@ -358,7 +371,10 @@ $('search').addEventListener('input',()=>{render();refreshSelbar();});
 $('chips').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b)return;
   activeType=b.dataset.type; document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));
   if(activeType!=='all')open=null; render(); refreshSelbar(); });
-function bulk(items){ items.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=dlUrl(f.cid,f.name);a.rel='noopener';document.body.appendChild(a);a.click();a.remove();},i*300)); }
+function bulk(items){
+  const risky=items.filter(isRisky).length;
+  if(risky&&!confirm('⚠ '+risky+' of these '+items.length+' files are programs/installers. Malware often hides as software — only continue if you trust the source.\n\nDownload all anyway?'))return;
+  items.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=dlUrl(f.cid,f.name);a.rel='noopener';document.body.appendChild(a);a.click();a.remove();},i*300)); }
 $('seldl').addEventListener('click',()=>{const items=[...sel].map(([cid,v])=>({cid,name:v.name}));bulk(items);});
 $('selclear').addEventListener('click',()=>{sel.clear();refreshSelbar();});
 $('selcopy').addEventListener('click',async e=>{try{await navigator.clipboard.writeText([...sel.keys()].join('\n'));e.target.textContent='✓ Copied';setTimeout(()=>e.target.textContent='⧉ Copy CIDs',1100);}catch{}});
