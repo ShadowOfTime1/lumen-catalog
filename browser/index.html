@@ -47,6 +47,12 @@
   .prow .badge{display:inline-block;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:11px;color:var(--muted);margin-right:7px}
   .prow .cid{font-family:ui-monospace,monospace;color:var(--lime);font-size:11.5px;margin-top:4px;word-break:break-all}
   .prow .act{display:flex;gap:7px;align-items:center;white-space:nowrap}
+  .pv:empty{display:none}
+  .pv{margin-top:10px}
+  .pvel{max-width:100%;border-radius:8px}
+  audio.pvel{width:340px;max-width:100%;height:36px}
+  img.pvel{max-height:260px;border:1px solid var(--line)}
+  .pvbtn.on{border-color:var(--lime);color:var(--lime)}
   .sz{color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums;margin-right:2px}
   input[type=checkbox]{appearance:none;width:18px;height:18px;border:1.5px solid var(--line);border-radius:5px;cursor:pointer;position:relative;background:var(--card2);flex:none}
   input[type=checkbox]:checked{background:var(--lime);border-color:var(--lime)}
@@ -104,7 +110,7 @@
   <button class="btn dl" id="seldl">⇩ Download selected</button>
 </div>
 
-<script id="registry" type="application/json">{"catalogs":[{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmRtczenYxMm5cLtqXGJPbCvGwCUuAeMV8AeQrNKMyDV2R","name":"Public Domain Library","count":8,"size":3300261,"tags":["fiction","classic","historical","fantasy","horror","adventure"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
+<script id="registry" type="application/json">{"catalogs":[{"cid":"QmcPxkAJpF27nubmpWf1fG7uviqYhWZBAMVeCM3PdY1uEV","name":"Free Software","count":3,"size":47272434,"tags":["linux","opensource","iso","container"]},{"cid":"QmYm1L63N2pAFpP5bP7uNuBau5HbVRNwsaKEUEAASz1YTB","name":"Music (Creative Commons)","count":10,"size":74880324,"tags":["music","classical","cc-by"]},{"cid":"Qmdjg8ukCDQJp1eT6FTmn8ipuhjHcH4gChvJd72anUiPWr","name":"Open Movies (Creative Commons)","count":2,"size":72265231,"tags":["video","animation","cc-by","open-movie"]},{"cid":"QmRtczenYxMm5cLtqXGJPbCvGwCUuAeMV8AeQrNKMyDV2R","name":"Public Domain Library","count":8,"size":3300261,"tags":["fiction","classic","historical","fantasy","horror","adventure"]},{"cid":"Qmc2wTdLZcNKBQ5zAoBb57mgiz1jxspVNUdHkbYvhDfoNz","name":"Science Fiction Classics","count":5,"size":1029166,"tags":["scifi","adventure","dystopia","horror","classic"]}]}</script>
 <script>
 const GATEWAYS=['https://dweb.link/ipfs/','https://ipfs.io/ipfs/','https://cloudflare-ipfs.com/ipfs/'];
 const REG=JSON.parse(document.getElementById('registry').textContent).catalogs||[];
@@ -168,14 +174,20 @@ function allFiles(){ return REG.filter(c=>cat[c.cid]).flatMap(c=>cat[c.cid].item
 const matchF=(f,q)=>((f.title||f.name)+' '+(f.description||'')+' '+(f.tags||[]).join(' ')+' '+(f._cat||'')).toLowerCase().includes(q);
 const matchC=(c,q)=>(c.name+' '+(c.tags||[]).join(' ')).toLowerCase().includes(q);
 
+const AUDIO_RE=/\.(mp3|flac|ogg|wav|m4a|aac)$/i, IMAGE_RE=/\.(png|jpe?g|gif|webp|avif)$/i;
+function previewKind(f){const t=(f.type||''),n=(f.name||'');
+  if(t.startsWith('audio/')||AUDIO_RE.test(n))return 'audio';
+  if((t.startsWith('image/')&&t!=='image/svg+xml')||IMAGE_RE.test(n))return 'image';
+  return null;}
 function fileRow(f,withCat){
-  const on=sel.has(f.cid), cid=esc(f.cid);
-  return `<div class="prow${on?' sel':''}" data-cid="${cid}" data-name="${esc(f.name)}" data-size="${esc(f.size)}">
+  const on=sel.has(f.cid), cid=esc(f.cid), pv=previewKind(f);
+  return `<div class="prow${on?' sel':''}" data-cid="${cid}" data-name="${esc(f.name)}" data-size="${esc(f.size)}"${pv?` data-pv="${pv}"`:''}>
     <input type="checkbox" class="ck"${on?' checked':''}>
     <div><div class="t">${esc(f.title||f.name)}</div>
       <div class="d">${withCat&&f._cat?`<span class="badge">${esc(f._cat)}</span>`:''}${esc(f.description||'')}</div>
-      <div class="cid" title="${cid}">${cid}</div></div>
+      <div class="cid" title="${cid}">${cid}</div><div class="pv"></div></div>
     <div class="act"><span class="sz">${fmt(f.size)}</span>
+      ${pv?`<button class="btn ghost pvbtn" title="Preview in browser">${pv==='audio'?'▶':'◱'}</button>`:''}
       <button class="btn ghost copy" data-cid="${cid}" title="Copy CID">⧉</button>
       <a class="btn" href="ipfs://${encodeURIComponent(f.cid)}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
       <a class="btn dl" href="${esc(dlUrl(f.cid,f.name))}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
@@ -233,6 +245,17 @@ function refreshSelbar(){
   const ckall=$('ckall'); if(ckall&&open&&cat[open])ckall.checked=cat[open].items.length>0&&cat[open].items.every(f=>sel.has(f.cid));
 }
 function toggle(cid,name,size,on){ if(on)sel.set(cid,{name,size}); else sel.delete(cid); }
+// in-browser preview: build the media element via DOM + encoded URL (no innerHTML, cid never touches markup)
+function togglePreview(row,btn){
+  const pv=row.querySelector('.pv'); if(!pv)return;
+  if(pv.firstChild){ pv.textContent=''; if(btn)btn.classList.remove('on'); return; }
+  const url=GATEWAYS[0]+encodeURIComponent(row.dataset.cid);
+  let el;
+  if(row.dataset.pv==='audio'){ el=document.createElement('audio'); el.controls=true; el.preload='none'; }
+  else { el=document.createElement('img'); el.loading='lazy'; el.alt=''; }
+  el.className='pvel'; el.src=url;
+  pv.appendChild(el); if(btn)btn.classList.add('on');
+}
 
 $('view').addEventListener('click',async e=>{
   const rm=e.target.closest('.rmcat');
@@ -240,6 +263,8 @@ $('view').addEventListener('click',async e=>{
   const card=e.target.closest('.cat');
   if(card){ openCat(card.dataset.cid); return; }
   if(e.target.id==='back'){ open=null; render(); refreshSelbar(); return; }
+  const pb=e.target.closest('.pvbtn');
+  if(pb){ togglePreview(pb.closest('.prow'),pb); return; }
   const cp=e.target.closest('.copy');
   if(cp){ try{await navigator.clipboard.writeText(cp.dataset.cid);cp.textContent='✓';setTimeout(()=>cp.textContent='⧉',900);}catch{} return; }
   if(e.target.classList.contains('ck')){ const r=e.target.closest('.prow'); toggle(r.dataset.cid,r.dataset.name,+r.dataset.size,e.target.checked); refreshSelbar(); return; }
