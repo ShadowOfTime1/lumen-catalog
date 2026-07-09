@@ -34,7 +34,8 @@
   .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:12px}
   .cat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px;cursor:pointer;transition:border-color .15s,transform .1s;position:relative}
   .cat:hover{border-color:var(--lime);transform:translateY(-2px)}
-  .cat .nm{font-weight:800;font-size:16px;padding-right:14px}
+  .cat .nm{font-weight:800;font-size:16px;padding-right:14px;display:flex;align-items:center;gap:8px}
+  .cat .nm .ti{color:var(--lime)}
   .cat .meta{color:var(--muted);font-size:12.5px;margin-top:6px}
   .cat .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px}
   .tag{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:11px;color:var(--muted)}
@@ -262,11 +263,17 @@ function fileRow(f,withCat){
       <a class="btn" href="ipfs://${encodeURIComponent(f.cid)}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
       <a class="btn dl" href="${esc(dlUrl(f.cid,f.name))}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
 }
+function catIcon(c){
+  const k=cat[c.cid]; if(!k||!Array.isArray(k.items)||!k.items.length)return '';
+  const cnt={}; k.items.forEach(f=>{const t=fileType(f);cnt[t]=(cnt[t]||0)+1;});
+  const dom=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+  return typeIcon({name:'.'+({audio:'mp3',video:'mp4',book:'epub',software:'iso',image:'png'}[dom]||'bin')});
+}
 function catCard(c){
   const cid=esc(c.cid);
   return `<div class="cat" data-cid="${cid}"><span class="dotav${c.up?' up':''}" title="${c.up?'online':'checking…'}"></span>
     ${c.custom?`<button class="rmcat" data-rm="${cid}" title="Remove">✕</button>`:''}
-    <div class="nm">${esc(c.name)}${c.custom?' <span class="mine">added</span>':''}</div>
+    <div class="nm">${catIcon(c)}${esc(c.name)}${c.custom?' <span class="mine">added</span>':''}</div>
     <div class="meta">${c.count||(cat[c.cid]?cat[c.cid].items.length:'?')} files · ${fmt(c.size)}</div>
     <div class="tags">${(c.tags||[]).slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>`;
 }
