@@ -128,10 +128,11 @@ let open=null;         // currently open catalog cid, or null
 
 // In the Lumen browser, fetch through its own IPFS node first (it's on the mesh with the publisher).
 // Return shape isn't documented, so normalise defensively and fall back to gateways on anything unexpected.
+const withTimeout=(pr,ms)=>Promise.race([pr,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 async function nativeGet(cid){
   const api=(typeof window!=='undefined')&&window.lumen;
   if(!api||typeof api.ipfsGet!=='function') return null;
-  let r; try{ r=await api.ipfsGet(cid); }catch{ return null; }
+  let r; try{ r=await withTimeout(api.ipfsGet(cid),8000); }catch{ return null; }  // never let a hung node stall the gateway fallback
   if(r==null) return null;
   let v=r;
   if(typeof r==='object'&&!(r instanceof Uint8Array)){
@@ -177,7 +178,9 @@ async function preload(){
   await Promise.all(REG.map(loadCatalog));
   setStat(); render();
   setTimeout(async()=>{ const failed=REG.filter(c=>!cat[c.cid]); if(!failed.length)return;
-    await Promise.all(failed.map(loadCatalog)); setStat(); render(); }, 4500);
+    await Promise.all(failed.map(loadCatalog)); setStat();
+    // don't clobber an open media preview; only re-render if something actually recovered
+    if(failed.some(c=>cat[c.cid]) && !document.querySelector('.pv > *')) render(); }, 4500);
 }
 
 // user-added catalogs (by CID), kept in this browser

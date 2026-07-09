@@ -241,10 +241,11 @@ async function driveAdd(bytes,name){
   const fn=driveFn(); if(!fn) throw new Error('drive_unavailable');
   const r=await fn(bytes,name);
   if(r&&r.ok===false) throw new Error(r.error||'add_failed');
-  const cid=(r&&(r.cid||r.Hash||r.hash))||(typeof r==='string'?r:'');
+  const cid=String((r&&(r.cid||r.Hash||r.hash))||(typeof r==='string'?r:''));   // coerce — a bogus non-string CID can't crash .slice later
   if(!cid) throw new Error('no_cid');
   return cid;
 }
+const DRIVE_MAX=1073741824;   // 1 GB safety cap before reading a file into memory
 function driveError(e){
   const m=String(e&&e.message||e);
   if(m==='file_too_large') return 'A file is too large for the Lumen Drive.';
@@ -259,6 +260,7 @@ async function exportDrive(withFiles,btn){
     if(withFiles){
       const its=buildCatalog().items; let n=0;
       for(const it of its){ const f=fileHandles.get(it.path); if(!f)continue;
+        if(f.size>DRIVE_MAX){ throw new Error('file_too_large'); }   // don't read a multi-GB file into memory
         label.textContent='Adding files… '+(++n)+'/'+its.length;
         await driveAdd(new Uint8Array(await f.arrayBuffer()),it.name); }
     }
@@ -289,9 +291,10 @@ expmenu.addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.clos
 $('imp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;
   try{const c=JSON.parse(await f.text());if(c.name)$('cname').value=c.name;
     if(Array.isArray(c.columns)){
+      const BAD=['__proto__','constructor','prototype'];
       c.columns.forEach(col=>{const key=String(col.key||col.label||'');let type=String(col.type||'text').toLowerCase();
         if(!['text','tags','date'].includes(type))type='text';
-        if(key&&!RESERVED.includes(key)&&!cols.some(x=>x.key===key))cols.push({key,label:String(col.label||key),type});});
+        if(key&&!RESERVED.includes(key)&&!BAD.includes(key)&&!cols.some(x=>x.key===key))cols.push({key,label:String(col.label||key),type});});
     }
     const byPath=new Map(items.map(i=>[i.path,i]));
     (c.items||[]).forEach(x=>{if(!x||x.cid==null)return;const p=String(x.path||x.name||'');const prev=byPath.get(p);
