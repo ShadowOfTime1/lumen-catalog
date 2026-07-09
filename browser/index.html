@@ -121,7 +121,29 @@ const cat={};          // cid -> catalog json (loaded)
 const sel=new Map();   // fileCid -> {name,size}
 let open=null;         // currently open catalog cid, or null
 
+// In the Lumen browser, fetch through its own IPFS node first (it's on the mesh with the publisher).
+// Return shape isn't documented, so normalise defensively and fall back to gateways on anything unexpected.
+async function nativeGet(cid){
+  const api=(typeof window!=='undefined')&&window.lumen;
+  if(!api||typeof api.ipfsGet!=='function') return null;
+  let r; try{ r=await api.ipfsGet(cid); }catch{ return null; }
+  if(r==null) return null;
+  let v=r;
+  if(typeof r==='object'&&!(r instanceof Uint8Array)){
+    if(r.ok===false) return null;
+    if(Array.isArray(r.items)) return r;                       // already the catalog object
+    v = r.json ?? r.data ?? r.content ?? r.body ?? null;
+    if(v==null) return null;
+  }
+  try{
+    if(v instanceof Uint8Array || (v&&v.buffer&&v.byteLength!=null)) v=new TextDecoder().decode(v);
+    if(typeof v==='string'){ const j=JSON.parse(v); return Array.isArray(j.items)?j:null; }
+    if(v&&Array.isArray(v.items)) return v;
+  }catch{}
+  return null;
+}
 async function fetchCID(cid){
+  const nat=await nativeGet(cid); if(nat) return nat;
   const c=encodeURIComponent(cid);
   try{const r=await fetch('ipfs://'+c);if(r.ok)return await r.json();}catch{}
   for(const g of GATEWAYS){try{const r=await fetch(g+c,{signal:AbortSignal.timeout(12000)});if(r.ok)return await r.json();}catch{}}
