@@ -144,7 +144,8 @@ function loadCustom(){ try{ (JSON.parse(localStorage.getItem(LS))||[]).forEach(c
 function parseCid(raw){
   let s=(raw||'').trim();
   const ix=s.lastIndexOf('/ipfs/'); if(ix>=0)s=s.slice(ix+6);   // accept gateway URLs
-  return s.replace(/^ipfs:\/\//,'').replace(/[/?#].*$/,'').trim(); // strip scheme + trailing path
+  s=s.replace(/^ipfs:\/\//,'').replace(/[/?#].*$/,'').trim();   // strip scheme + trailing path
+  return /^[A-Za-z0-9]+$/.test(s)?s:'';                          // CIDs are base32/58 — reject anything else
 }
 async function addByCid(raw){
   const cid=parseCid(raw);
@@ -180,8 +181,9 @@ function fileRow(f,withCat){
       <a class="btn dl" href="${esc(dlUrl(f.cid,f.name))}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
 }
 function catCard(c){
-  return `<div class="cat" data-cid="${c.cid}"><span class="dotav${c.up?' up':''}" title="${c.up?'online':'checking…'}"></span>
-    ${c.custom?`<button class="rmcat" data-rm="${c.cid}" title="Remove">✕</button>`:''}
+  const cid=esc(c.cid);
+  return `<div class="cat" data-cid="${cid}"><span class="dotav${c.up?' up':''}" title="${c.up?'online':'checking…'}"></span>
+    ${c.custom?`<button class="rmcat" data-rm="${cid}" title="Remove">✕</button>`:''}
     <div class="nm">${esc(c.name)}${c.custom?' <span class="mine">added</span>':''}</div>
     <div class="meta">${c.count||(cat[c.cid]?cat[c.cid].items.length:'?')} files · ${fmt(c.size)}</div>
     <div class="tags">${(c.tags||[]).slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>`;
