@@ -61,6 +61,17 @@
     .btns{width:100%}.btns .btn,.btns button{flex:1;justify-content:center}
     .meta .name{width:100%}
   }
+  .dd{position:relative;display:inline-block}
+  .caret{font-size:10px;opacity:.8}
+  .ddmenu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:240px;background:var(--panel);
+    border:1px solid var(--line);border-radius:11px;padding:6px;display:none;box-shadow:0 12px 34px rgba(0,0,0,.5)}
+  .ddmenu.on{display:block}
+  .ddi{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;background:0;border:0;
+    color:var(--ink);font:inherit;font-size:13px;padding:9px 11px;border-radius:8px;cursor:pointer}
+  .ddi:hover{background:var(--card)}
+  .ddi[disabled]{opacity:.4;cursor:not-allowed}
+  .ddi .cid-out{font-family:ui-monospace,monospace;font-size:11px;color:var(--lime)}
+  .ddnote{color:var(--muted);font-size:11.5px;padding:6px 11px 3px;border-top:1px solid var(--line);margin-top:4px}
   ::-webkit-scrollbar{height:9px;width:9px}::-webkit-scrollbar-thumb{background:#1e2e24;border-radius:9px}
 </style>
 </head>
@@ -74,7 +85,15 @@
     <div class="btns">
       <label class="btn">↥ Import JSON<input id="imp" type="file" accept="application/json" hidden></label>
       <button id="clear">✕ Clear</button>
-      <button id="exp" class="primary">↧ Export JSON</button>
+      <div class="dd" id="expdd">
+        <button id="exp" class="primary">↧ Export <span class="caret">▾</span></button>
+        <div class="ddmenu" id="expmenu">
+          <button class="ddi" data-exp="computer">Catalog → your computer</button>
+          <button class="ddi" data-exp="drive" data-drive>Catalog → Lumen Drive <span class="cid-out"></span></button>
+          <button class="ddi" data-exp="drive-files" data-drive>Catalog + files → Lumen Drive</button>
+          <div class="ddnote" id="ddnote"></div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -165,6 +184,7 @@ $('addcol').addEventListener('click',()=>{
   render();
 });
 
+const fileHandles=new Map();   // path -> File, kept for "export files to Lumen Drive"
 async function addFiles(fileList){
   const files=[...fileList]; if(!files.length)return;
   $('prog').classList.add('on'); let done=0;
@@ -174,6 +194,7 @@ async function addFiles(fileList){
       const buf=new Uint8Array(await f.arrayBuffer());
       const cid=await window.ipfsHash(buf);
       const path=f.webkitRelativePath||f.name;
+      fileHandles.set(path,f);   // keep the handle so we can push files to Lumen Drive later
       const prev=existing.get(path);
       if(prev){Object.assign(prev,{cid,size:f.size,type:f.type||''});}
       else{const rec={cid,name:f.name,path,size:f.size,type:f.type||''};
@@ -192,15 +213,65 @@ const drop=$('drop');
 drop.addEventListener('drop',async e=>{const its=e.dataTransfer.items;const fs=[];
   for(const it of its){const f=it.getAsFile&&it.getAsFile();if(f)fs.push(f);} if(fs.length)addFiles(fs);});
 
-$('exp').addEventListener('click',()=>{
-  const cat={lumen_catalog:'1',name:$('cname').value||'Untitled catalog',created:new Date().toISOString(),
+function buildCatalog(){
+  return {lumen_catalog:'1',name:$('cname').value||'Untitled catalog',created:new Date().toISOString(),
     count:items.length,total_size:totalSize(),
     columns:cols.map(c=>({key:c.key,label:c.label,type:c.type})),
     items:items.map(i=>{const o={cid:i.cid,name:i.name,path:i.path,size:i.size,type:i.type};
       cols.forEach(c=>o[c.key]=i[c.key]!==undefined?i[c.key]:(c.type==='tags'?[]:''));return o;})};
-  const blob=new Blob([JSON.stringify(cat,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=(cat.name.replace(/[^\w.-]+/g,'_')||'catalog')+'.lumencatalog.json';a.click();
+}
+function catalogName(){return ($('cname').value.replace(/[^\w.-]+/g,'_')||'catalog')+'.lumencatalog.json';}
+
+// --- export to the user's computer (works everywhere) ---
+function exportComputer(){
+  const blob=new Blob([JSON.stringify(buildCatalog(),null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=catalogName();a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+
+// --- Lumen Drive (only inside the Lumen browser, via window.lumen) ---
+// Feature-detected against the browser's preload. Method name to be confirmed with the API;
+// we try the likely candidates so it lights up as soon as the browser exposes it.
+function driveFn(){ const L=(typeof window!=='undefined')&&window.lumen;
+  return L && (L.ipfsAdd||L.addBytes||(L.drive&&L.drive.add)||(L.ipfs&&L.ipfs.add)) || null; }
+const hasDrive=()=>!!driveFn();
+async function driveAdd(bytes,name){
+  const fn=driveFn(); if(!fn) throw new Error('Lumen Drive API not available');
+  const r=await fn(bytes,name);                     // expected: returns a CID (string) or {cid}
+  return typeof r==='string'?r:(r&&(r.cid||r.Hash||r.hash))||'';
+}
+async function exportDrive(withFiles,btn){
+  const label=btn.childNodes[0]; const old=label.textContent;
+  try{
+    label.textContent=withFiles?'Adding files…':'Saving…'; btn.disabled=true;
+    if(withFiles){
+      for(const it of buildCatalog().items){
+        const f=fileHandles.get(it.path); if(!f)continue;
+        await driveAdd(new Uint8Array(await f.arrayBuffer()),it.name);
+      }
+    }
+    const cid=await driveAdd(new TextEncoder().encode(JSON.stringify(buildCatalog())),catalogName());
+    const out=btn.querySelector('.cid-out'); if(out)out.textContent=cid?cid.slice(0,8)+'…':'done';
+    $('ddnote').textContent='Catalog CID: '+cid+'  (paste it into index.lmn)';
+    try{await navigator.clipboard.writeText(cid);}catch{}
+  }catch(e){ $('ddnote').textContent='Could not reach Lumen Drive — open catalog.lmn in the Lumen browser.'; }
+  finally{ label.textContent=old; btn.disabled=false; }
+}
+
+// dropdown wiring
+const expmenu=$('expmenu');
+$('exp').addEventListener('click',e=>{ e.stopPropagation(); expmenu.classList.toggle('on');
+  if(expmenu.classList.contains('on')){
+    const dis=!hasDrive();
+    document.querySelectorAll('.ddi[data-drive]').forEach(b=>b.disabled=dis);
+    $('ddnote').textContent=dis?'Lumen Drive options need the latest Lumen browser.':'';
+  }
+});
+document.addEventListener('click',()=>expmenu.classList.remove('on'));
+expmenu.addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.closest('.ddi'); if(!b||b.disabled)return;
+  const mode=b.dataset.exp;
+  if(mode==='computer'){ exportComputer(); expmenu.classList.remove('on'); }
+  else exportDrive(mode==='drive-files',b);
 });
 $('imp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;
   try{const c=JSON.parse(await f.text());if(c.name)$('cname').value=c.name;
@@ -216,7 +287,7 @@ $('imp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)ret
       if(prev)Object.assign(prev,rec);else{items.push(rec);byPath.set(p,rec);}});
     render();
   }catch(err){alert('Invalid catalog JSON')} e.target.value='';});
-$('clear').addEventListener('click',()=>{if(items.length&&confirm('Clear all files?')){items=[];render();}});
+$('clear').addEventListener('click',()=>{if(items.length&&confirm('Clear all files?')){items=[];fileHandles.clear();render();}});
 $('cname').addEventListener('input',()=>{});
 render();
 </script>
