@@ -235,26 +235,38 @@ function exportComputer(){
 function driveFn(){ const L=(typeof window!=='undefined')&&window.lumen;
   return L && (L.ipfsAdd||L.addBytes||(L.drive&&L.drive.add)||(L.ipfs&&L.ipfs.add)) || null; }
 const hasDrive=()=>!!driveFn();
+// window.lumen.ipfsAdd(data, filename) -> {ok:true, cid, name, size} | {ok:false, error}
 async function driveAdd(bytes,name){
-  const fn=driveFn(); if(!fn) throw new Error('Lumen Drive API not available');
-  const r=await fn(bytes,name);                     // expected: returns a CID (string) or {cid}
-  return typeof r==='string'?r:(r&&(r.cid||r.Hash||r.hash))||'';
+  const fn=driveFn(); if(!fn) throw new Error('drive_unavailable');
+  const r=await fn(bytes,name);
+  if(r&&r.ok===false) throw new Error(r.error||'add_failed');
+  const cid=(r&&(r.cid||r.Hash||r.hash))||(typeof r==='string'?r:'');
+  if(!cid) throw new Error('no_cid');
+  return cid;
+}
+function driveError(e){
+  const m=String(e&&e.message||e);
+  if(m==='file_too_large') return 'A file is too large for the Lumen Drive.';
+  if(m==='drive_unavailable') return 'Open catalog.lmn in the Lumen browser to use the Drive.';
+  if(m==='no_cid') return 'Drive returned no CID — try again.';
+  return 'Could not reach the Lumen Drive ('+m+').';
 }
 async function exportDrive(withFiles,btn){
   const label=btn.childNodes[0]; const old=label.textContent;
   try{
-    label.textContent=withFiles?'Adding files…':'Saving…'; btn.disabled=true;
+    btn.disabled=true;
     if(withFiles){
-      for(const it of buildCatalog().items){
-        const f=fileHandles.get(it.path); if(!f)continue;
-        await driveAdd(new Uint8Array(await f.arrayBuffer()),it.name);
-      }
+      const its=buildCatalog().items; let n=0;
+      for(const it of its){ const f=fileHandles.get(it.path); if(!f)continue;
+        label.textContent='Adding files… '+(++n)+'/'+its.length;
+        await driveAdd(new Uint8Array(await f.arrayBuffer()),it.name); }
     }
+    label.textContent='Saving catalog…';
     const cid=await driveAdd(new TextEncoder().encode(JSON.stringify(buildCatalog())),catalogName());
-    const out=btn.querySelector('.cid-out'); if(out)out.textContent=cid?cid.slice(0,8)+'…':'done';
-    $('ddnote').textContent='Catalog CID: '+cid+'  (paste it into index.lmn)';
+    const out=btn.querySelector('.cid-out'); if(out)out.textContent=cid.slice(0,8)+'…';
+    $('ddnote').textContent='Catalog CID: '+cid+'  (copied — paste it into index.lmn)';
     try{await navigator.clipboard.writeText(cid);}catch{}
-  }catch(e){ $('ddnote').textContent='Could not reach Lumen Drive — open catalog.lmn in the Lumen browser.'; }
+  }catch(e){ $('ddnote').textContent=driveError(e); }
   finally{ label.textContent=old; btn.disabled=false; }
 }
 
