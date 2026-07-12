@@ -1,12 +1,12 @@
 {
   "lumen_catalog": "1",
   "name": "Public Domain Library",
-  "created": "2026-07-09T17:38:42.649Z",
+  "created": "2026-07-12T18:45:47.500Z",
   "count": 18,
   "total_size": 7446762,
   "items": [
     {
-      "cid": "QmZkrxHg8cRHDWmEicfJmnMEyZpg1BQmX73GHRg88ix9Uv",
+      "cid": "bafkreieasjtk2dp7armikeekbj5jibpriusqfe626eomjpdnxksj2mgave",
       "name": "A_Modest_Proposal.epub",
       "path": "A_Modest_Proposal.epub",
       "size": 107318,
@@ -20,7 +20,7 @@
       ]
     },
     {
-      "cid": "QmNNjMmhWpK83YPj5DSZJcZNmsBedxFyNKXDnRcHfGpt9o",
+      "cid": "bafybeib3bxuk7nxo5w57aazaxab5iinhym25j2xwbek33vaa3xc6yw5day",
       "name": "A_Tale_of_Two_Cities.epub",
       "path": "A_Tale_of_Two_Cities.epub",
       "size": 487621,
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "cid": "QmbzRv4YZKzT8JhcxHorZQVrrbCMQVpEbjKD5V6eihLm6p",
+      "cid": "bafybeiaeen7gbr5clthreuvmxo3xqqc3pvmro22fdmflknxk52npkvyzgq",
       "name": "Adventures_of_Huckleberry_Finn.epub",
       "path": "Adventures_of_Huckleberry_Finn.epub",
       "size": 347404,
@@ -50,7 +50,7 @@
       ]
     },
     {
-      "cid": "QmXQSdg938fbYq4Rm9ruAWqi58aDeH3X4bQkkz3zeZjHQY",
+      "cid": "bafkreicblsp3hekjcsdjbsgyz35bww7scip7nvk2fsochk3jsi7mcbc5um",
       "name": "Alice_s_Adventures_in_Wonderland.epub",
       "path": "Alice_s_Adventures_in_Wonderland.epub",
       "size": 136726,
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "cid": "QmUoYjJ3BJaq2nQCt6pa7HmRope96vwG66vrnXPEKsgr18",
+      "cid": "bafybeifcy27r5mar667z4apuzru3lrtdszblboprsslbf2dc6lroat46gy",
       "name": "Crime_and_Punishment.epub",
       "path": "Crime_and_Punishment.epub",
       "size": 651249,
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "cid": "QmS7BXzcJnmArHPv6inkyuq8xBiKqkiLwK4mfyHC4URoxz",
+      "cid": "bafybeiakibhmus3nudrjt2ntzbubp2evsfr3grvrchmumfe4z5lbndc2iq",
       "name": "Dracula.epub",
       "path": "Dracula.epub",
       "size": 433250,
@@ -95,7 +95,7 @@
       ]
     },
     {
-      "cid": "QmPB9ACbgz3cLFhn3x2VUsBRwiV6bSaSK3zLNET7KM5oMG",
+      "cid": "bafybeicssjfqnmzo6froikumrost5fizkbfgqlhk5aol2i2yesnmz5cdrq",
       "name": "Frankenstein.epub",
       "path": "Frankenstein.epub",
       "size": 356363,
@@ -110,7 +110,7 @@
       ]
     },
     {
-      "cid": "QmQsZvENu7sQVHAtLFtvwFy3KzJ8iZN19mQS7FkGj4NuNo",
+      "cid": "bafybeig2luvnqedyiqrm4atxyjk4npqjqi2m7xpatk266qqydivud3f5da",
       "name": "Great_Expectations.epub",
       "path": "Great_Expectations.epub",
       "size": 554524,
@@ -124,7 +124,7 @@
       ]
     },
     {
-      "cid": "QmaFWvGmi9NuV5jw28ge7spHXFsWTFswSPDbMHPoMszNdD",
+      "cid": "bafybeigc2apypnaux4dxwex24kboeqzdsya3dcmyidngzcoovlkkvpgbje",
       "name": "Jane_Eyre.epub",
       "path": "Jane_Eyre.epub",
       "size": 607643,
@@ -139,7 +139,7 @@
       ]
     },
     {
-      "cid": "QmTS5RWLQEqtnC6KsGBkMRwVUdb6pFd3r4KMAPzRLi7FWD",
+      "cid": "bafybeiehn6lb6bweyzlbbjg6su2v23d33xfw56uf3j36kbku45za2q3xsa",
       "name": "Little_Women.epub",
       "path": "Little_Women.epub",
       "size": 550672,
@@ -153,7 +153,7 @@
       ]
     },
     {
-      "cid": "Qmada7CUfUwudssE7Gx8UmzZGbLTjFgt8FRuh3dKGy1P1b",
+      "cid": "bafkreic3ezahknc4gui6kcm243rqsln5powpylhoq4p4tiodghdukqdbea",
       "name": "Metamorphosis.epub",
       "path": "Metamorphosis.epub",
       "size": 158573,
@@ -167,7 +167,7 @@
       ]
     },
     {
-      "cid": "QmQGKaHNHmn1rRWN3iBpWLigUHpQYQqHESN4Dkhq5AomM2",
+      "cid": "bafybeia46xgf2no4xoim5uisoqkw53wrp42yqaykosuhqredig5cqasg4u",
       "name": "Moby_Dick.epub",
       "path": "Moby_Dick.epub",
       "size": 727431,
@@ -182,7 +182,7 @@
       ]
     },
     {
-      "cid": "QmYDtAFofibWKyF7r5tSfJfhXFxz2gPvDqtsobbb4hS8Nd",
+      "cid": "bafybeicb7qqgy4jb6fvq6ehs424zfqmvgfyojb776cbwa77jwxexi5uvbi",
       "name": "Pride_and_Prejudice.epub",
       "path": "Pride_and_Prejudice.epub",
       "size": 558543,
@@ -197,7 +197,7 @@
       ]
     },
     {
-      "cid": "Qme8jQbvFnLCpjHN6S7JAFgTvjmgYNSUaFoNpLdTTvdMD1",
+      "cid": "bafybeieo5unrep4tqojzmc3poa6fblmr5vessuhsjp4rww4nkwuuqy7bve",
       "name": "The_Adventures_of_Sherlock_Holmes.epub",
       "path": "The_Adventures_of_Sherlock_Holmes.epub",
       "size": 311586,
@@ -212,7 +212,7 @@
       ]
     },
     {
-      "cid": "QmWSTxnwBycWBKnmweNc9k14Yyn5uAZCb7wpdXZGBSxKX5",
+      "cid": "bafybeib63kfrnszvgzzc23a6at4ra3yjaier3fsycl6r632arto6n43yiq",
       "name": "The_Adventures_of_Tom_Sawyer.epub",
       "path": "The_Adventures_of_Tom_Sawyer.epub",
       "size": 288741,
@@ -227,7 +227,7 @@
       ]
     },
     {
-      "cid": "QmRwHmDYJGvQ7J6MeW7Bxn5GBJftCo5FjphXWA2junVWwZ",
+      "cid": "bafybeifzs3qiuxhl53uazzcivo2gmky3ku6ccwvkjloyxufr7ed6g4ihle",
       "name": "The_Picture_of_Dorian_Gray.epub",
       "path": "The_Picture_of_Dorian_Gray.epub",
       "size": 460207,
@@ -241,7 +241,7 @@
       ]
     },
     {
-      "cid": "QmPAor81sCRoBVMjG7XiC5p1ME8NCmK6tXmZgWyPkg2aGe",
+      "cid": "bafybeihdcgpqq635qtcocqv3tua6ytyhsqwd23luwiy57imwffjeohpita",
       "name": "Treasure_Island.epub",
       "path": "Treasure_Island.epub",
       "size": 273950,
@@ -256,7 +256,7 @@
       ]
     },
     {
-      "cid": "QmRck5MUKeSgSAPhwEWX9zwD7VvNHCDvQY7vUWN47g9bKx",
+      "cid": "bafybeidewjan72rfgzdhf3fxttl7xzyc6dwcjknkn24klxgyeu5qbkiqni",
       "name": "Wuthering_Heights.epub",
       "path": "Wuthering_Heights.epub",
       "size": 434961,

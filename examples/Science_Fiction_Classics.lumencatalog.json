@@ -1,12 +1,12 @@
 {
   "lumen_catalog": "1",
   "name": "Science Fiction Classics",
-  "created": "2026-07-09T17:38:42.864Z",
+  "created": "2026-07-12T18:45:47.819Z",
   "count": 5,
   "total_size": 1029166,
   "items": [
     {
-      "cid": "QmNkjsGABYLKB5P69TURB7xJVX18ud7GCgDQCJGKj4CLvd",
+      "cid": "bafybeic7lezo3gue6p5hjfach7e47yckty5c72dbriyk7yos5drlwphmpe",
       "name": "20000_Leagues_Under_the_Sea.epub",
       "path": "20000_Leagues_Under_the_Sea.epub",
       "size": 370666,
@@ -20,7 +20,7 @@
       ]
     },
     {
-      "cid": "Qmct5ctj73bHmFhUeuvN1sG4yDqFmnbGcNim76R1V4qsaH",
+      "cid": "bafkreidv7t6s3d3fiumigeebvqyoydnrkvwowoapuiq7nxyjy72z5xp4je",
       "name": "Anthem.epub",
       "path": "Anthem.epub",
       "size": 111461,
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "cid": "QmWn2V6sDPkB5YKWJEF7AGHJeen2MCGFkM23TVLdM8b6WH",
+      "cid": "bafkreicj2vue6g3vtewgtmxn4xskm6c6nkornon4cgfv2vzegk2dz3cqf4",
       "name": "Dr_Jekyll_and_Mr_Hyde.epub",
       "path": "Dr_Jekyll_and_Mr_Hyde.epub",
       "size": 142433,
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "cid": "QmRCarqM1Lc1xiD9w8JTAXow1sKb3NLascx5KECrbT5ghs",
+      "cid": "bafkreibd7buajduyqolfxdln6vnj3xksnei3xzq347wjilqtnosu6iznoa",
       "name": "The_Time_Machine.epub",
       "path": "The_Time_Machine.epub",
       "size": 162548,
@@ -62,7 +62,7 @@
       ]
     },
     {
-      "cid": "QmPZrLEPggm2tGdpD3TkQ6RrtwjPfZMDNKL5cbDte9KjBe",
+      "cid": "bafkreibapykxjb7nff2l2wva3levv5p7hb5zu4q73hfd4dchun4qrz2ynm",
       "name": "War_of_the_Worlds.epub",
       "path": "War_of_the_Worlds.epub",
       "size": 242058,

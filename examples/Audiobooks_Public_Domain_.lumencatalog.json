@@ -1,12 +1,12 @@
 {
   "lumen_catalog": "1",
   "name": "Audiobooks (Public Domain)",
-  "created": "2026-07-09T17:38:44.839Z",
+  "created": "2026-07-12T18:45:49.589Z",
   "count": 7,
   "total_size": 37257148,
   "items": [
     {
-      "cid": "QmSbCnyLAKT29LJwo2vTwgu9wgFr82c4t8mC5EezqowPvX",
+      "cid": "bafybeicisn7l7fbtw3mbzrd7mgaxpdewbvdalq6so5566yeio4yqnljbla",
       "name": "art_of_war_01-02_sun_tzu_64kb.mp3",
       "path": "art_of_war_01-02_sun_tzu_64kb.mp3",
       "size": 3911680,
@@ -22,7 +22,7 @@
       ]
     },
     {
-      "cid": "QmeBmxAamRvmxREu4XoyKmx92AisD5oKT2WADqyMABJ8Ea",
+      "cid": "bafybeifwr366mcs6pqpwysfatcu75mqlulkng5egjr3p3vupbd7jr3xhqu",
       "name": "art_of_war_03-04_sun_tzu_64kb.mp3",
       "path": "art_of_war_03-04_sun_tzu_64kb.mp3",
       "size": 3723859,
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "cid": "QmRt5SQ2mZTLroUTZsyUbpecSQ3t6xxMK3mVi5Vfiy54HH",
+      "cid": "bafybeifg4hp3so3s6cc6f7mfqv7nqtouuvwjdpdy5wh52s6mwaakbwaepu",
       "name": "art_of_war_05-06_sun_tzu_64kb.mp3",
       "path": "art_of_war_05-06_sun_tzu_64kb.mp3",
       "size": 5094335,
@@ -54,7 +54,7 @@
       ]
     },
     {
-      "cid": "QmVUDStFJxiUhqs1yADh3ynzAQ1gXvFnzn6BGhoQ48FWHi",
+      "cid": "bafybeien5andj5hkpmaooc2a2t6jehfanz6ftt756zlsv3pye5xckpbqya",
       "name": "art_of_war_07-08_sun_tzu_64kb.mp3",
       "path": "art_of_war_07-08_sun_tzu_64kb.mp3",
       "size": 4246508,
@@ -70,7 +70,7 @@
       ]
     },
     {
-      "cid": "QmYnMF5Q78ZxmNduEWjQ5G3P1uEUA2eGgE639RytCnHqKJ",
+      "cid": "bafybeidy5ovfzl5pobf5crav2nlubzd553prnbricsuzqrcipdnvurvasy",
       "name": "art_of_war_09-10_sun_tzu_64kb.mp3",
       "path": "art_of_war_09-10_sun_tzu_64kb.mp3",
       "size": 7059580,
@@ -86,7 +86,7 @@
       ]
     },
     {
-      "cid": "QmPywhedSNTKkWguzneFy4WYhhfhCKJqHHHD3m5Tw4Der3",
+      "cid": "bafybeigyaeo6if3xvu63t73i5p6kn46uyclcb6yrbc3yecw6a7ebrspjhi",
       "name": "art_of_war_11_sun_tzu_64kb.mp3",
       "path": "art_of_war_11_sun_tzu_64kb.mp3",
       "size": 5717494,
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "cid": "QmWRtcwBnZru3scNRwvamqDF7cKfXYu5FRmMpRnVqZ5r59",
+      "cid": "bafybeigq2zhwf5n6n6rxlzss7ws2ycq6kaqa23rysmcba57i2draapore4",
       "name": "art_of_war_12-13_sun_tzu.mp3",
       "path": "art_of_war_12-13_sun_tzu.mp3",
       "size": 7503692,

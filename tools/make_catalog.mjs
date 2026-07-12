@@ -24,7 +24,7 @@ const items = [];
 for (const file of fs.readdirSync(folder).sort()) {
   const full = path.join(folder, file);
   if (!fs.statSync(full).isFile()) continue;
-  const cid = ipfs(['add', '-Q', full]);           // pins + returns CID
+  const cid = ipfs(['add', '-Q', '--cid-version=1', full]);   // CIDv1+raw-leaves — matches the Lumen Drive
   const sha256 = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex'); // for VirusTotal lookups
   const m = meta[file] || {};
   items.push({
