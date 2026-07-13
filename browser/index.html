@@ -268,7 +268,7 @@ function fileRow(f,withCat){
     <div class="act"><span class="sz">${fmt(f.size)}</span>
       ${pv?`<button class="btn ghost pvbtn" title="Preview in browser">${pv==='audio'?'▶':'◱'}</button>`:''}
       <button class="btn ghost copy" data-cid="${cid}" title="Copy CID">⧉</button>${vt}
-      <a class="btn" href="ipfs://${encodeURIComponent(f.cid)}" download="${esc(f.name)}" title="Native IPFS download">ipfs://</a>
+      <a class="btn" href="lumen://ipfs/${encodeURIComponent(f.cid)}" target="_blank" rel="noopener" title="Open in a new tab">Open</a>
       <a class="btn dl" href="${esc(dlUrl(f.cid,f.name))}" target="_blank" rel="noopener">⇩ Download</a></div></div>`;
 }
 function catIcon(c){
