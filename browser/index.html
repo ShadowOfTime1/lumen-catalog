@@ -182,7 +182,7 @@ const canSave=()=>!!(window.lumen&&typeof window.lumen.Save==='function');
 // CIDs from untrusted catalogs must be shape-checked before we hand them to a native API.
 const isCid=s=>typeof s==='string'&&/^[A-Za-z0-9]+$/.test(s)&&s.length>=8&&s.length<=128;
 // A catalog controls the file name; strip anything that could be read as a path before Save writes it to the drive.
-const safeName=n=>String(n||'').replace(/[\x00-\x1f]/g,'').replace(/[\/\\]/g,'_').replace(/\.{2,}/g,'_').trim().slice(0,200)||'file';
+const safeName=n=>String(n||'').replace(/[^\w.\- ]+/g,'_').replace(/\.{2,}/g,'_').trim().slice(0,200)||'file';
 async function nativeSave(cid,name){
   if(!canSave())return false;
   if(!isCid(cid))return false;              // malformed CID → skip Save, fall back to the (encoded) gateway link
