@@ -143,8 +143,7 @@ const cat={};          // cid -> catalog json (loaded)
 const sel=new Map();   // fileCid -> {name,size}
 let open=null;         // currently open catalog cid, or null
 
-// In the Lumen browser, fetch through its own IPFS node first (it's on the mesh with the publisher).
-// Return shape isn't documented, so normalise defensively and fall back to gateways on anything unexpected.
+// fetch via the browser's own node first, gateways otherwise; normalise defensively
 const withTimeout=(pr,ms)=>Promise.race([pr,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 async function nativeGet(cid){
   const api=(typeof window!=='undefined')&&window.lumen;
@@ -168,21 +167,19 @@ async function nativeGet(cid){
 async function fetchCID(cid){
   const nat=await nativeGet(cid); if(nat) return nat;
   const c=encodeURIComponent(cid);
-  // race ipfs:// and every gateway in parallel — first valid response wins, one slow/dead gateway can't stall us
+  // race ipfs:// + all gateways, first valid wins
   const tries=['ipfs://'+c,...GATEWAYS.map(g=>g+c)].map(u=>
     fetch(u,{signal:AbortSignal.timeout(10000)}).then(r=>r.ok?r.json():Promise.reject(new Error('bad'))));
   try{ const k=await Promise.any(tries); if(!validCatalog(k)) throw new Error('not_catalog'); return k; }
   catch(e){ throw new Error(e&&e.message==='not_catalog'?'not_catalog':'unavailable'); }
 }
 const dlUrl=(cid,name)=>GATEWAYS[0]+encodeURIComponent(cid)+'?filename='+encodeURIComponent(name)+'&download=true';
-// In the Lumen browser, Save() pins the whole file (its full DAG) into your drive under a name.
-// The gateway link only returns the root block for large multi-block files (a movie comes out ~512KB),
-// so when Save is available we use it; otherwise we fall back to the gateway link (small files, other browsers).
+// Save/Pin puts the whole file in the drive; the gateway link only gives the root block for big files
 const saveFn=()=>{ const L=window.lumen; const f=L&&(L.Pin||L.Save); return typeof f==='function'?f.bind(L):null; };
 const canSave=()=>!!saveFn();
-// CIDs from untrusted catalogs must be shape-checked before we hand them to a native API.
+// shape-check a cid from an untrusted catalog before any native call
 const isCid=s=>typeof s==='string'&&/^[A-Za-z0-9]+$/.test(s)&&s.length>=8&&s.length<=128;
-// A catalog controls the file name; strip anything that could be read as a path before Save writes it to the drive.
+// strip path-ish chars from the catalog-supplied name
 const safeName=n=>String(n||'').replace(/[^\w.\- ]+/g,'_').replace(/\.{2,}/g,'_').trim().slice(0,200)||'file';
 async function nativeSave(cid,name){
   const fn=saveFn(); if(!fn||!isCid(cid))return false;      // no pin/save method or bad CID → fall back to the gateway link

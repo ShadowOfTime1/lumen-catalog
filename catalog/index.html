@@ -233,16 +233,13 @@ function exportComputer(){
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
 }
 
-// --- Lumen Drive (only inside the Lumen browser, via window.lumen) ---
-// Feature-detected against the browser's preload. Method name to be confirmed with the API;
-// we try the likely candidates so it lights up as soon as the browser exposes it.
+// --- Lumen Drive via window.lumen (feature-detected) ---
 function driveFn(){ const L=(typeof window!=='undefined')&&window.lumen;
   return L && (L.ipfsAdd||L.addBytes||(L.drive&&L.drive.add)||(L.ipfs&&L.ipfs.add)) || null; }
-// Save() surfaces an already-added CID in the Lumen Drive under a name (latest browser).
-// ipfsAdd alone pins the bytes but the user never sees them in the Drive, so we add, then Save.
+// ipfsAdd pins the bytes; Save/Pin then surfaces it in the Drive
 function saveFn(){ const L=(typeof window!=='undefined')&&window.lumen; const f=L&&(L.Pin||L.Save); return typeof f==='function'?f.bind(L):null; }
 const hasDrive=()=>!!(driveFn()&&saveFn());   // need ipfsAdd to get the CID *and* Save to put it in the Drive
-// the drive writes files under a name — allowlist safe chars so nothing (incl. %2e%2e%2f) can be read as a path
+// allowlist safe chars in the drive filename (no path tricks)
 const safeName=n=>String(n||'').replace(/[^\w.\- ]+/g,'_').replace(/\.{2,}/g,'_').trim().slice(0,200)||'file';
 const isCid=s=>typeof s==='string'&&/^[A-Za-z0-9]+$/.test(s)&&s.length>=8&&s.length<=128;
 // window.lumen.ipfsAdd(data, filename) -> {ok:true, cid, name, size} | {ok:false, error}
