@@ -240,7 +240,7 @@ function driveFn(){ const L=(typeof window!=='undefined')&&window.lumen;
   return L && (L.ipfsAdd||L.addBytes||(L.drive&&L.drive.add)||(L.ipfs&&L.ipfs.add)) || null; }
 // Save() surfaces an already-added CID in the Lumen Drive under a name (latest browser).
 // ipfsAdd alone pins the bytes but the user never sees them in the Drive, so we add, then Save.
-function saveFn(){ const L=(typeof window!=='undefined')&&window.lumen; return (L&&typeof L.Save==='function')?L.Save.bind(L):null; }
+function saveFn(){ const L=(typeof window!=='undefined')&&window.lumen; const f=L&&(L.Pin||L.Save); return typeof f==='function'?f.bind(L):null; }
 const hasDrive=()=>!!(driveFn()&&saveFn());   // need ipfsAdd to get the CID *and* Save to put it in the Drive
 // the drive writes files under a name — allowlist safe chars so nothing (incl. %2e%2e%2f) can be read as a path
 const safeName=n=>String(n||'').replace(/[^\w.\- ]+/g,'_').replace(/\.{2,}/g,'_').trim().slice(0,200)||'file';
@@ -250,10 +250,11 @@ async function driveAdd(bytes,name){
   const fn=driveFn(); if(!fn) throw new Error('drive_unavailable');
   const r=await fn(bytes,name);
   if(r&&r.ok===false) throw new Error(r.error||'add_failed');
-  const cid=String((r&&(r.cid||r.Hash||r.hash))||(typeof r==='string'?r:''));   // coerce — a bogus non-string CID can't crash .slice later
-  if(!isCid(cid)) throw new Error('no_cid');   // never hand a malformed CID to Save
+  const d=r&&r.data;   // newer builds wrap the result in {ok,data}; older ones put cid at the top
+  const cid=String((r&&(r.cid||r.Hash||r.hash))||(d&&(d.cid||d.Hash||d.hash))||(typeof d==='string'?d:'')||(typeof r==='string'?r:''));
+  if(!isCid(cid)) throw new Error('no_cid');
   const save=saveFn();
-  if(save) await save(cid,{name:safeName(name)});   // put it in the Drive so the user actually sees it
+  if(save){ const s=await save(cid,{name:safeName(name)}); if(s&&s.ok===false) throw new Error(s.error||'save_failed'); }
   return cid;
 }
 const DRIVE_MAX=1073741824;   // 1 GB safety cap before reading a file into memory

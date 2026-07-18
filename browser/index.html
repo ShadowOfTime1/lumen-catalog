@@ -178,16 +178,16 @@ const dlUrl=(cid,name)=>GATEWAYS[0]+encodeURIComponent(cid)+'?filename='+encodeU
 // In the Lumen browser, Save() pins the whole file (its full DAG) into your drive under a name.
 // The gateway link only returns the root block for large multi-block files (a movie comes out ~512KB),
 // so when Save is available we use it; otherwise we fall back to the gateway link (small files, other browsers).
-const canSave=()=>!!(window.lumen&&typeof window.lumen.Save==='function');
+const saveFn=()=>{ const L=window.lumen; const f=L&&(L.Pin||L.Save); return typeof f==='function'?f.bind(L):null; };
+const canSave=()=>!!saveFn();
 // CIDs from untrusted catalogs must be shape-checked before we hand them to a native API.
 const isCid=s=>typeof s==='string'&&/^[A-Za-z0-9]+$/.test(s)&&s.length>=8&&s.length<=128;
 // A catalog controls the file name; strip anything that could be read as a path before Save writes it to the drive.
 const safeName=n=>String(n||'').replace(/[^\w.\- ]+/g,'_').replace(/\.{2,}/g,'_').trim().slice(0,200)||'file';
 async function nativeSave(cid,name){
-  if(!canSave())return false;
-  if(!isCid(cid))return false;              // malformed CID → skip Save, fall back to the (encoded) gateway link
-  try{ await window.lumen.Save(cid,{name:safeName(name)}); return true; }
-  catch(err){ console.warn('Save failed',err); return false; }
+  const fn=saveFn(); if(!fn||!isCid(cid))return false;      // no pin/save method or bad CID → fall back to the gateway link
+  try{ const r=await fn(cid,{name:safeName(name)}); return !(r&&r.ok===false); }
+  catch(err){ console.warn('save failed',err); return false; }
 }
 const validCatalog=k=>k&&Array.isArray(k.items);
 
